@@ -1,0 +1,12 @@
+<resources>
+
+
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/TealActionBar</item>
+    </style>
+
+    <style name="TealActionBar" parent="android:Widget.ActionBar">
+        <item name="android:background">@drawable/ab_solid</item>
+    </style>
+
+</resources>
