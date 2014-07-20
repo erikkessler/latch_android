@@ -1,12 +1,31 @@
 <resources>
 
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarStyle">@style/TealActionBar</item>
+    <style name="MyTheme" parent="android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarStyle">@style/MyTheme.TealActionBar</item>
     </style>
 
-    <style name="TealActionBar" parent="android:Widget.ActionBar">
+    <style name="MyTheme.TealActionBar" parent="android:style/Widget.ActionBar">
         <item name="android:background">@drawable/ab_solid</item>
+        <item name="android:titleTextStyle">@style/MyTheme.TealActionBar.TextStyle</item>
     </style>
+
+    <style name="MyTheme.TealActionBar.TextStyle">
+    <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="today_header_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginBottom">@dimen/activity_vertical_margin</item>
+        <item name="android:layout_marginLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:layout_marginRight">@dimen/activity_horizontal_margin</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+
 
 </resources>
