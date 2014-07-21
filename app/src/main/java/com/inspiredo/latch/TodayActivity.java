@@ -5,21 +5,20 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
 public class TodayActivity extends Activity {
-
-    /**
-     * Certain screens allow for dual pane layout
-     */
-    boolean mDualPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +26,24 @@ public class TodayActivity extends Activity {
         setContentView(R.layout.activity_today);
 
         // Setup the list
+        ListView seqList = (ListView) findViewById(R.id.today_seq_list);
+        SeqListAdapter seqAdapter = new SeqListAdapter(this, R.layout.row_seq);
+        if (seqList == null) {
+            Log.d("Today", "seqList is null");
+        }
+        seqAdapter.add(dummySeq("Morning", "Drink Water", "Breakfast"));
+        seqAdapter.add(dummySeq("Night", "2' Meditate", "Sleep"));
+        seqList.setAdapter(seqAdapter);
 
+    }
 
+    private Sequence dummySeq(String seq, String step, String reward) {
+        Sequence s = new Sequence(seq);
+        s.addStep(new Step(step));
+        s.addStep(new Step("20' Read"));
+        s.addStep(new Step("10 Pushups"));
+        s.setReward(reward);
+        return s;
     }
 
 
