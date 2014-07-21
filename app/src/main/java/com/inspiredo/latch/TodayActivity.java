@@ -32,6 +32,7 @@ public class TodayActivity extends Activity {
             Log.d("Today", "seqList is null");
         }
         seqAdapter.add(dummySeq("Morning", "Drink Water", "Breakfast"));
+        seqAdapter.add(dummySeq("Midday", "Brush Teeth", "Lunch"));
         seqAdapter.add(dummySeq("Night", "2' Meditate", "Sleep"));
         seqList.setAdapter(seqAdapter);
 

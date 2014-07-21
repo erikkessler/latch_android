@@ -10,6 +10,11 @@ public class Step {
      */
     private String mTitle;
 
+    /**
+     * True if the step is complete
+     */
+    private Boolean mComplete;
+
 
     /**
      * Construct step with the given title
@@ -17,6 +22,31 @@ public class Step {
      */
     public Step(String title) {
         mTitle = title;
+        mComplete = false;
+    }
+
+    /**
+     * @return The state of the step
+     */
+    public Boolean isComplete() {
+        return mComplete;
+    }
+
+    /**
+     * Toggles the complete state
+     * @return The new state
+     */
+    public Boolean toggleComplete() {
+        mComplete = !mComplete;
+        return mComplete;
+    }
+
+    /**
+     * Set the completeness to a certain state
+     * @param complete The state to set it to
+     */
+    public void setComplete(Boolean complete) {
+        mComplete = complete;
     }
 
     @Override
