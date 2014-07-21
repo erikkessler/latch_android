@@ -1,24 +1,26 @@
 package com.inspiredo.latch;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
+/**
+ * Activity that gets launched at the start. Displays the day's sequences, allows user
+ * to mark steps as complete, and add new sequences/steps
+ */
 public class TodayActivity extends Activity {
+
+    // SequenceAdapter
+    SeqListAdapter mSequenceAdapter;
+
+    // Request code for creating a sequence
+    static final int CREATE_SEQ_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,14 +29,25 @@ public class TodayActivity extends Activity {
 
         // Setup the list
         ListView seqList = (ListView) findViewById(R.id.today_seq_list);
-        SeqListAdapter seqAdapter = new SeqListAdapter(this, R.layout.row_seq);
+        mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq);
         if (seqList == null) {
             Log.d("Today", "seqList is null");
         }
-        seqAdapter.add(dummySeq("Morning", "Drink Water", "Breakfast"));
-        seqAdapter.add(dummySeq("Midday", "Brush Teeth", "Lunch"));
-        seqAdapter.add(dummySeq("Night", "2' Meditate", "Sleep"));
-        seqList.setAdapter(seqAdapter);
+
+        final Context thisContext = this;
+        Runnable getSequences = new Runnable() {
+            @Override
+            public void run() {
+                SeqDataSource dataSource = new SeqDataSource(thisContext);
+                dataSource.open();
+                mSequenceAdapter.addAll(dataSource.getAllSequences());
+                mSequenceAdapter.notifyDataSetChanged();
+                dataSource.close();
+            }
+        };
+        new Thread(getSequences).run();
+
+        seqList.setAdapter(mSequenceAdapter);
 
     }
 
@@ -63,11 +76,30 @@ public class TodayActivity extends Activity {
                 return true;
             case R.id.action_add:
                 // TODO: Add Habit Activity
+                SeqDataSource dataSource = new SeqDataSource(this);
+                dataSource.open();
+                mSequenceAdapter.add(dataSource.createSequence(dummySeq("Though", "I swim","I am")));
+                mSequenceAdapter.notifyDataSetChanged();
+                Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
+                startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
+                dataSource.close();
                 return true;
             default:
                 Toast.makeText(this, "Unimplemented action", Toast.LENGTH_SHORT)
                         .show();
                 return true;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == CREATE_SEQ_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Log.d("REsult", "OKAY!");
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.d("Result","Canceled");
+            }
         }
     }
 

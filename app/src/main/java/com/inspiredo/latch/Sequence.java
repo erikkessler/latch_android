@@ -24,6 +24,11 @@ public class Sequence {
     private String mReward;
 
     /**
+     * ID for DB Query
+     */
+    private long mId;
+
+    /**
      * Construct a sequence with only a name
      * @param title The seq title
      */
@@ -84,6 +89,20 @@ public class Sequence {
      */
     public void setReward(String reward) {
         mReward = reward;
+    }
+
+    /**
+     * Set the ID
+     */
+    public void setId(long id) {
+        mId = id;
+    }
+
+    /**
+     * @return id of the db entry
+     */
+    public long getId() {
+        return mId;
     }
 
     @Override

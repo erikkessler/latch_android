@@ -6,5 +6,7 @@
     <string name="action_add">Add</string>
     <string name="today_header_title">Today</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_create_seq">CreateSeqActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
