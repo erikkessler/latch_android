@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.inspiredo.latch.StepViewSwitcher xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/create_title_switcher"
+    android:layout_margin="@dimen/activity_vertical_margin"
+    android:layout_gravity="center_horizontal"
+    >
+
+    <EditText
+        android:hint="@string/step_title_hint"
+        android:id="@+id/step_title_edit"
+        android:layout_gravity="center"
+        style="@style/create_edit_text" />
+
+    <TextView
+        style="@style/step_title"
+        android:id="@+id/step_title_view"
+        android:layout_gravity="center_horizontal"/>
+
+</com.inspiredo.latch.StepViewSwitcher>

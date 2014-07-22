@@ -1,6 +1,7 @@
 package com.inspiredo.latch;
 
 import android.content.Context;
+import android.util.AttributeSet;
 import android.widget.ViewSwitcher;
 
 /**
@@ -12,6 +13,10 @@ public class StepViewSwitcher extends ViewSwitcher {
 
     public StepViewSwitcher(Context context) {
         this(context, "");
+    }
+
+    public StepViewSwitcher(Context context, AttributeSet attrs) {
+        super(context, attrs);
     }
 
     public StepViewSwitcher(Context context, String string) {

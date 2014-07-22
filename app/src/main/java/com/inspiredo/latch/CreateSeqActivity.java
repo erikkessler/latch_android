@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,14 +116,14 @@ public class  CreateSeqActivity extends Activity {
 
     // Creates a new StepViewSwitcher
     private StepViewSwitcher createStepView() {
-        final StepViewSwitcher newSwitcher = new StepViewSwitcher(this);
+        final StepViewSwitcher newSwitcher = (StepViewSwitcher) getLayoutInflater()
+                .inflate(R.layout.step_switcher,null);
 
         // Create and setup the EditText
-        final EditText edit = new EditText(this);
-        edit.setHint(getString(R.string.step_title_hint));
+        final EditText edit = (EditText) newSwitcher.findViewById(R.id.step_title_edit);
 
         // Create and setup the TextView
-        final TextView view = new TextView(this, null, R.style.step_title);
+        final TextView view = (TextView) newSwitcher.findViewById(R.id.step_title_view);
 
         edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -144,10 +145,7 @@ public class  CreateSeqActivity extends Activity {
             }
         });
 
-        // Add the views
-        newSwitcher.addView(edit);
-        newSwitcher.addView(view);
-
+        edit.requestFocus();
         return newSwitcher;
     }
 
