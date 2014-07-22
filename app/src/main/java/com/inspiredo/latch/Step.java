@@ -1,7 +1,7 @@
 package com.inspiredo.latch;
 
 /**
- * Created by erik on 7/20/14.
+ * Object that represents each instance of a step
  */
 public class Step {
 
@@ -15,6 +15,16 @@ public class Step {
      */
     private Boolean mComplete;
 
+    /**
+     * Id of the sequence that this step belongs to
+     */
+    private long mSequenceId;
+
+    /**
+     * Id of the step in the DB
+     */
+    private long mId;
+
 
     /**
      * Construct step with the given title
@@ -23,6 +33,21 @@ public class Step {
     public Step(String title) {
         mTitle = title;
         mComplete = false;
+    }
+
+    /**
+     * @return The title of the step
+     */
+    public String getTitle() {
+        return mTitle;
+    }
+
+    /**
+     * Set the title to a new value
+     * @param title Name of the new title
+     */
+    public void setTitle(String title) {
+        mTitle = title;
     }
 
     /**
@@ -47,6 +72,36 @@ public class Step {
      */
     public void setComplete(Boolean complete) {
         mComplete = complete;
+    }
+
+    /**
+     * @return The id of the sequence
+     */
+    public long getSequenceId() {
+        return mSequenceId;
+    }
+
+    /**
+     * Set the id of the step's sequence
+     * @param id Id of the step's sequence
+     */
+    public void setSequenceId(long id) {
+        mSequenceId = id;
+    }
+
+    /**
+     * @return The id of the step
+     */
+    public long getId() {
+        return mId;
+    }
+
+    /**
+     * Set the id of the step in the DB
+     * @param id Id of the step
+     */
+    public void setId(long id) {
+        mId = id;
     }
 
     @Override

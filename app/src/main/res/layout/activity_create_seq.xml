@@ -1,16 +1,86 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.inspiredo.latch.CreateSeqActivity">
+    tools:context="com.inspiredo.latch.CreateSeqActivity"
+    android:gravity="center_horizontal">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView" >
 
-</RelativeLayout>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_horizontal">
+
+            <ViewSwitcher
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_title_switcher"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                >
+
+                <EditText
+                    android:id="@+id/create_title_edit"
+                    android:hint="@string/create_title_hint"
+                    style="@style/create_edit_text" />
+
+                <TextView
+                    style="@style/seq_title"
+                    android:text="YOLO"
+                    android:id="@+id/create_title_view"
+                    android:layout_gravity="center_horizontal"/>
+
+
+
+            </ViewSwitcher>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/create_steps_container">
+
+            </LinearLayout>
+
+            <ImageButton
+                android:layout_width="100dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_action_new"
+                android:background="@color/primary_lightest"
+                android:id="@+id/create_add_step"
+                android:layout_margin="16dp"/>
+
+            <ViewSwitcher
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/create_reward_switcher"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                >
+
+                <EditText
+                    android:id="@+id/create_reward_edit"
+                    android:hint="@string/create_reward_hint"
+                    style="@style/create_edit_text"
+                    />
+
+                <TextView
+                    style="@style/seq_reward"
+                    android:text="YOLO"
+                    android:id="@+id/create_reward_view"
+                    android:layout_gravity="center_horizontal"/>
+
+
+
+            </ViewSwitcher>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

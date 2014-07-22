@@ -17,19 +17,24 @@ public class SeqDataSource {
     // Database fields
     private SQLiteDatabase database;
     private SeqSQLiteHelper dbHelper;
+    private StepSQLiteHelper stepDbHelper;
+    private SQLiteDatabase stepDatabase;
     private String[] allColumns = { SeqSQLiteHelper.COLUMN_ID,
             SeqSQLiteHelper.COLUMN_TITLE, SeqSQLiteHelper.COLUMN_REWARD };
 
     public SeqDataSource(Context context) {
         dbHelper = new SeqSQLiteHelper(context);
+        stepDbHelper = new StepSQLiteHelper(context);
     }
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
+        stepDatabase = stepDbHelper.getWritableDatabase();
     }
 
     public void close() {
         dbHelper.close();
+        stepDbHelper.close();
     }
 
     public Sequence createSequence(Sequence seq) {
@@ -44,9 +49,9 @@ public class SeqDataSource {
                 allColumns, SeqSQLiteHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
-        Sequence newComment = cursorToSeq(cursor);
+        Sequence newSequence = cursorToSeq(cursor);
         cursor.close();
-        return newComment;
+        return newSequence;
     }
 
     public List<Sequence> getAllSequences() {
@@ -57,8 +62,9 @@ public class SeqDataSource {
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
-            Sequence comment = cursorToSeq(cursor);
-            sequences.add(comment);
+            Sequence sequence = cursorToSeq(cursor);
+            sequence.setSteps(getSteps(sequence.getId()));
+            sequences.add(sequence);
             cursor.moveToNext();
         }
         // make sure to close the cursor
@@ -66,10 +72,36 @@ public class SeqDataSource {
         return sequences;
     }
 
+    public List<Step> getSteps(long id) {
+        List<Step> steps = new ArrayList<Step>();
+
+        Cursor cursor = stepDatabase.query(StepSQLiteHelper.TABLE_STEPS,
+                null, StepSQLiteHelper.COLUMN_SEQ +"=?",
+                new String[] {id +""}, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Step step = cursorToStep(cursor);
+            steps.add(step);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return steps;
+    }
+
     private Sequence cursorToSeq(Cursor cursor) {
         Sequence sequence = new Sequence(cursor.getString(1));
         sequence.setId(cursor.getLong(0));
         sequence.setReward(cursor.getString(2));
         return sequence;
+    }
+
+    private Step cursorToStep(Cursor cursor) {
+        Step step = new Step(cursor.getString(1));
+        step.setId(cursor.getLong(0));
+        step.setComplete(cursor.getInt(2) == 1);
+        step.setSequenceId(cursor.getLong(3));
+        return step;
     }
 }

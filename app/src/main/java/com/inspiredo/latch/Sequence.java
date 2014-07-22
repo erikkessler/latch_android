@@ -77,6 +77,15 @@ public class Sequence {
     }
 
     /**
+     * Sets the steps to the passed list.
+     * Will override any existing steps
+     * @param steps The new list to set to
+     */
+    public void setSteps(List<Step> steps) {
+        mSteps = steps;
+    }
+
+    /**
      * @return Reward of completing the sequence
      */
     public String getReward() {

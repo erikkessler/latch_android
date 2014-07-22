@@ -8,13 +8,9 @@
     android:paddingTop="24dp">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Dummy Title"
-        android:textColor="@color/accent"
-        android:textSize="32sp"
-        android:fontFamily="sans-serif-light"
-        android:id="@+id/seq_title"/>
+        android:id="@+id/seq_title"
+        style="@style/seq_title" />
 
     <ListView
         android:layout_width="fill_parent"
@@ -24,11 +20,8 @@
         android:divider="@null"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Dummy Reward"
-        android:textColor="@color/primary_light"
-        android:textSize="32sp"
-        android:id="@+id/seq_reward"/>
+        android:id="@+id/seq_reward"
+        style="@style/seq_reward" />
 
 </LinearLayout>

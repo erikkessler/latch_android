@@ -76,13 +76,23 @@ public class TodayActivity extends Activity {
                 return true;
             case R.id.action_add:
                 // TODO: Add Habit Activity
-                SeqDataSource dataSource = new SeqDataSource(this);
+               /* SeqDataSource dataSource = new SeqDataSource(this);
+                StepDataSource stepDataSource = new StepDataSource(this);
                 dataSource.open();
-                mSequenceAdapter.add(dataSource.createSequence(dummySeq("Though", "I swim","I am")));
+                stepDataSource.open();
+                Sequence s = dataSource.createSequence(dummySeq("Thoughs", "I EAt", "I am"));
+                Step step = new Step("Hello");
+                step.setSequenceId(s.getId());
+                step = stepDataSource.createStep(step);
+                s.addStep(step);
+                mSequenceAdapter.add(s);
                 mSequenceAdapter.notifyDataSetChanged();
                 Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
                 startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
                 dataSource.close();
+                stepDataSource.close();*/
+                Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
+                startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
                 return true;
             default:
                 Toast.makeText(this, "Unimplemented action", Toast.LENGTH_SHORT)
