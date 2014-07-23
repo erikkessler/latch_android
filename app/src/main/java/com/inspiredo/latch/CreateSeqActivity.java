@@ -3,8 +3,13 @@ package com.inspiredo.latch;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
+
+import java.util.ArrayList;
 
 public class  CreateSeqActivity extends Activity {
 
@@ -33,6 +40,7 @@ public class  CreateSeqActivity extends Activity {
 
     private String          mTitle;
     private String          mReward;
+    private ArrayList<String> mSteps;
 
 
     @Override
@@ -62,10 +70,25 @@ public class  CreateSeqActivity extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus && mTitleEdit.getText().length() != 0) {
-                    mTitle = mTitleEdit.getText().toString();
                     mTitleView.setText(mTitle);
                     mTitleSwitcher.showNext();
                 }
+            }
+        });
+        mTitleEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mTitle = mTitleEdit.getText().toString();
             }
         });
 
@@ -89,6 +112,22 @@ public class  CreateSeqActivity extends Activity {
                     mRewardView.setText(mReward);
                     mRewardSwitcher.showNext();
                 }
+            }
+        });
+        mRewardEdit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mReward = mRewardEdit.getText().toString();
             }
         });
 
@@ -129,10 +168,25 @@ public class  CreateSeqActivity extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus && edit.getText().length() != 0) {
-                    newSwitcher.setString(edit.getText().toString());
                     view.setText(edit.getText().toString());
                     newSwitcher.showNext();
                 }
+            }
+        });
+        edit.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                newSwitcher.setString(edit.getText().toString());
             }
         });
 
@@ -168,7 +222,12 @@ public class  CreateSeqActivity extends Activity {
                 return true;
             case R.id.action_save:
                 // TODO: Save
-                validate();
+                if (validate()) {
+                    Intent i = new Intent();
+                    i.putExtra("sequence_id", save());
+                    setResult(RESULT_OK, i);
+                    finish();
+                }
                 return true;
             case R.id.action_cancel:
                 setResult(RESULT_CANCELED);
@@ -182,19 +241,52 @@ public class  CreateSeqActivity extends Activity {
     }
 
     /**
+     * Saves the sequence and its steps
+     * @return Returns the index of the sequence
+     */
+    private long save() {
+        long id;
+
+        SeqDataSource dataSource = new SeqDataSource(this);
+        StepDataSource stepDataSource = new StepDataSource(this);
+        dataSource.open();
+        stepDataSource.open();
+
+        Sequence s = dataSource.createSequence(
+                new Sequence(mTitle, null, mReward)
+        );
+        id = s.getId();
+
+        for (String stepString : mSteps) {
+            Step step = new Step(stepString);
+            step.setSequenceId(id);
+            stepDataSource.createStep(step);
+        }
+
+        dataSource.close();
+        stepDataSource.close();
+
+        return id;
+    }
+
+    /**
      * Validates that the sequence is good: Has a title and at least one step.
      * Displays an error Toast if not.
      * @return If the sequence is valid
      */
     private boolean validate() {
-        mTitle = mTitleEdit.getText().toString();
-        mReward = mRewardEdit.getText().toString();
+        mSteps = getSteps();
 
-        String errors = "To save you need:\n";
+        String errors = "To save you need:";
         boolean valid = true;
 
         if (mTitle == null || mTitle.isEmpty()) {
-            errors += "     A title";
+            errors += "\n     A title";
+            valid = false;
+        }
+
+        if (mSteps.isEmpty()) {
+            errors += "\n     At least one step";
             valid = false;
         }
 
@@ -203,5 +295,26 @@ public class  CreateSeqActivity extends Activity {
         }
 
         return valid;
+    }
+
+    /**
+     * Get all the steps by checking the container
+     * @return Array of the step titles
+     */
+    private ArrayList<String> getSteps() {
+        ArrayList<String> steps = new ArrayList<String>();
+
+        int count = mStepContainer.getChildCount();
+        Log.d("Count",count + "");
+        for (int i = 0; i < count; i++) {
+            StepViewSwitcher s = (StepViewSwitcher) mStepContainer.getChildAt(i);
+            if (s.getString()!= null && s.getString().length() != 0) {
+                steps.add(s.getString());
+            }
+        }
+
+        Log.d("Steps", steps.toString());
+
+        return steps;
     }
 }
