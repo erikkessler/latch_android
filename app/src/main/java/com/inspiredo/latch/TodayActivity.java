@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,13 +32,30 @@ public class TodayActivity extends Activity {
         setContentView(R.layout.activity_today);
 
         // Setup the list
-        ListView seqList = (ListView) findViewById(R.id.today_seq_list);
+        final Context thisContext = this;
+        final ListView seqList = (ListView) findViewById(R.id.today_seq_list);
+
+        seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                SeqDataSource dataSource = new SeqDataSource(thisContext);
+                dataSource.open();
+                Sequence s = (Sequence) seqList.getItemAtPosition(position);
+                dataSource.deleteSequence(s);
+                mSequenceAdapter.remove(s);
+                mSequenceAdapter.notifyDataSetChanged();
+                dataSource.close();
+                return true;
+            }
+        });
         mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq);
         if (seqList == null) {
             Log.d("Today", "seqList is null");
         }
 
-        final Context thisContext = this;
+
         Runnable getSequences = new Runnable() {
             @Override
             public void run() {

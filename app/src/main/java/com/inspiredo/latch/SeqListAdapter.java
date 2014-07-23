@@ -41,6 +41,8 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
             // Set the steps
             ListView steps = (ListView) convertView.findViewById(R.id.seq_step_list);
+            steps.setFocusable(false); // Needed to allow parent list to be clickable
+            steps.setFocusableInTouchMode(false); // Needed to allow parent list to be clickable
             if (steps != null) {
                 // Create adapter and add all steps
                 StepListAdapter stepAdapter =

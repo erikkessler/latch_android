@@ -104,6 +104,14 @@ public class SeqDataSource {
         return steps;
     }
 
+    public void deleteSequence(Sequence sequence) {
+        long id = sequence.getId();
+        database.delete(SeqSQLiteHelper.TABLE_SEQUENCES,
+                SeqSQLiteHelper.COLUMN_ID + " = " + id, null);
+        stepDatabase.delete(StepSQLiteHelper.TABLE_STEPS,
+                StepSQLiteHelper.COLUMN_SEQ + " = " + id, null);
+    }
+
     private Sequence cursorToSeq(Cursor cursor) {
         Sequence sequence = new Sequence(cursor.getString(1));
         sequence.setId(cursor.getLong(0));

@@ -17,8 +17,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/today_seq_list"
         android:dividerHeight="4px"
-        android:divider="@drawable/seq_list_divider"
-        />
+        android:divider="@drawable/seq_list_divider" />
 
 
 

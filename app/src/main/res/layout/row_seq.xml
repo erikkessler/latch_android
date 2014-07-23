@@ -17,7 +17,7 @@
         android:layout_height="56dp"
         android:id="@+id/seq_step_list"
         android:dividerHeight="0px"
-        android:divider="@null"/>
+        android:divider="@null" />
 
     <TextView
         android:text="Dummy Reward"
