@@ -9,14 +9,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 /**
  * Binds info about the steps to a ListView
  */
 public class StepListAdapter extends ArrayAdapter<Step> implements AdapterView.OnItemClickListener {
 
+    Context mContext;
+
     // Calls the super constructor
     public StepListAdapter(Context context, int resource) {
         super(context, resource);
+        mContext = context;
     }
 
     @Override
@@ -36,11 +41,24 @@ public class StepListAdapter extends ArrayAdapter<Step> implements AdapterView.O
             TextView title = (TextView) convertView.findViewById(R.id.seq_step_title);
             if (title != null) {
                 title.setText(s.toString());
+                setView(title, s.isComplete());
             }
 
         }
 
         return convertView;
+    }
+
+    private void setView(TextView tv, boolean complete) {
+        if (complete) {
+            tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            tv.setTextColor(getContext().getResources()
+                    .getColor(android.R.color.darker_gray));
+        } else {
+            tv.setPaintFlags(tv.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+            tv.setTextColor(getContext().getResources()
+                    .getColor(android.R.color.black));
+        }
     }
 
     // Handles clicks: Toggles the completeness. If complete draws a line through and
@@ -51,15 +69,17 @@ public class StepListAdapter extends ArrayAdapter<Step> implements AdapterView.O
         TextView tv = (TextView) view.findViewById(R.id.seq_step_title);
 
         // Toggle completeness and act accordingly
+        StepDataSource dataSource = new StepDataSource(mContext);
+        dataSource.open();
         if (s.toggleComplete()) {
-            tv.setPaintFlags(tv.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            tv.setTextColor(getContext().getResources()
-                    .getColor(android.R.color.darker_gray));
+            // Step complete
+            setView(tv, true);
+            dataSource.completeStep(s, true);
         } else {
-            tv.setPaintFlags(tv.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
-            tv.setTextColor(getContext().getResources()
-                    .getColor(android.R.color.black));
+            // Step incomplete
+            setView(tv, false);
+            dataSource.completeStep(s, false);
         }
-
+        dataSource.close();
     }
 }

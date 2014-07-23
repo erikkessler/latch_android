@@ -51,7 +51,7 @@ public class StepDataSource {
         return newStep;
     }
 
-    public List<Step> getAllSequences() {
+    public List<Step> getAllStepss() {
         List<Step> steps = new ArrayList<Step>();
 
         Cursor cursor = database.query(SeqSQLiteHelper.TABLE_SEQUENCES,
@@ -66,6 +66,15 @@ public class StepDataSource {
         // make sure to close the cursor
         cursor.close();
         return steps;
+    }
+
+    public void completeStep(Step step, boolean complete) {
+        long id = step.getId();
+
+        ContentValues values = new ContentValues();
+        values.put(StepSQLiteHelper.COLUMN_COMPLETE, complete);
+        database.update(StepSQLiteHelper.TABLE_STEPS, values,
+                StepSQLiteHelper.COLUMN_ID + " = " + id, null);
     }
 
     private Step cursorToStep(Cursor cursor) {
