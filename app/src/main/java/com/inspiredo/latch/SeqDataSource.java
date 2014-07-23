@@ -72,6 +72,20 @@ public class SeqDataSource {
         return sequences;
     }
 
+    public Sequence getSequence(long id) {
+        Cursor cursor = database.query(SeqSQLiteHelper.TABLE_SEQUENCES,
+                null, StepSQLiteHelper.COLUMN_ID +"=?",
+                new String[] {id +""}, null, null, null);
+
+        Sequence sequence = null;
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            sequence = cursorToSeq(cursor);
+            cursor.moveToNext();
+        }
+        return sequence;
+    }
+
     public List<Step> getSteps(long id) {
         List<Step> steps = new ArrayList<Step>();
 

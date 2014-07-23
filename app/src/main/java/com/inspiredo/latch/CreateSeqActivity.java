@@ -40,8 +40,9 @@ public class  CreateSeqActivity extends Activity {
 
     private String          mTitle;
     private String          mReward;
-    private ArrayList<String> mSteps;
+    private ArrayList<String>   mSteps;
 
+    public static final String  ID_KEY = "sequence_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,7 +225,7 @@ public class  CreateSeqActivity extends Activity {
                 // TODO: Save
                 if (validate()) {
                     Intent i = new Intent();
-                    i.putExtra("sequence_id", save());
+                    i.putExtra(ID_KEY, save());
                     setResult(RESULT_OK, i);
                     finish();
                 }
@@ -305,15 +306,12 @@ public class  CreateSeqActivity extends Activity {
         ArrayList<String> steps = new ArrayList<String>();
 
         int count = mStepContainer.getChildCount();
-        Log.d("Count",count + "");
         for (int i = 0; i < count; i++) {
             StepViewSwitcher s = (StepViewSwitcher) mStepContainer.getChildAt(i);
             if (s.getString()!= null && s.getString().length() != 0) {
                 steps.add(s.getString());
             }
         }
-
-        Log.d("Steps", steps.toString());
 
         return steps;
     }

@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.List;
+
 /**
  * Activity that gets launched at the start. Displays the day's sequences, allows user
  * to mark steps as complete, and add new sequences/steps
@@ -76,21 +78,6 @@ public class TodayActivity extends Activity {
                 return true;
             case R.id.action_add:
                 // TODO: Add Habit Activity
-               /* SeqDataSource dataSource = new SeqDataSource(this);
-                StepDataSource stepDataSource = new StepDataSource(this);
-                dataSource.open();
-                stepDataSource.open();
-                Sequence s = dataSource.createSequence(dummySeq("Thoughs", "I EAt", "I am"));
-                Step step = new Step("Hello");
-                step.setSequenceId(s.getId());
-                step = stepDataSource.createStep(step);
-                s.addStep(step);
-                mSequenceAdapter.add(s);
-                mSequenceAdapter.notifyDataSetChanged();
-                Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
-                startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
-                dataSource.close();
-                stepDataSource.close();*/
                 Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
                 startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
                 return true;
@@ -106,7 +93,20 @@ public class TodayActivity extends Activity {
 
         if (requestCode == CREATE_SEQ_REQUEST) {
             if (resultCode == RESULT_OK) {
-                Log.d("REsult", "OKAY!");
+                long newId = data.getLongExtra(CreateSeqActivity.ID_KEY, -1);
+                if (newId != -1) {
+                    SeqDataSource dataSource = new SeqDataSource(this);
+                    dataSource.open();
+                    Sequence newS = dataSource.getSequence(newId);
+                    List<Step> newSteps = dataSource.getSteps(newId);
+                    if (newS != null) {
+                        newS.setSteps(newSteps);
+                        mSequenceAdapter.add(newS);
+                        mSequenceAdapter.notifyDataSetChanged();
+                    }
+
+                    dataSource.close();
+                }
             } else if (resultCode == RESULT_CANCELED) {
                 Log.d("Result","Canceled");
             }
