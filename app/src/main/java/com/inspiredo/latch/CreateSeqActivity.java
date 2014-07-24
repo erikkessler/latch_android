@@ -1,22 +1,15 @@
 package com.inspiredo.latch;
 
-import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -26,22 +19,33 @@ import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 
+/**
+ * Activity that is launched that allows for the creation of a new sequence.
+ * Allows setting of title, steps, and reward
+ * TODO: Triggers
+ * TODO: Orientation Change
+ */
 public class  CreateSeqActivity extends Activity {
 
+    // Views for the title
     private ViewSwitcher    mTitleSwitcher;
     private TextView        mTitleView;
     private EditText        mTitleEdit;
 
+    // Views for the reward
     private ViewSwitcher    mRewardSwitcher;
     private TextView        mRewardView;
     private EditText        mRewardEdit;
 
+    // Container for the steps
     private LinearLayout    mStepContainer;
 
+    // Holds the current values of the title, steps, and reward
     private String          mTitle;
     private String          mReward;
     private ArrayList<String>   mSteps;
 
+    // Key for sending back the ID of the created sequence
     public static final String  ID_KEY = "sequence_id";
 
     @Override
@@ -142,10 +146,9 @@ public class  CreateSeqActivity extends Activity {
             }
         });
 
-        // Make the button handle clicks
+        // Make the button handle clicks - adds new view for a step
         mStepContainer = (LinearLayout) findViewById(R.id.create_steps_container);
         ImageButton addStep = (ImageButton) findViewById(R.id.create_add_step);
-        final Context thisContext = this;
         addStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,6 +168,7 @@ public class  CreateSeqActivity extends Activity {
         // Create and setup the TextView
         final TextView view = (TextView) newSwitcher.findViewById(R.id.step_title_view);
 
+        // Listen for when the EditText loses focus
         edit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -174,6 +178,9 @@ public class  CreateSeqActivity extends Activity {
                 }
             }
         });
+
+
+        // Listen for when the text is changed
         edit.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -192,6 +199,7 @@ public class  CreateSeqActivity extends Activity {
         });
 
 
+        // Listen for when the view is clicked
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,7 +208,8 @@ public class  CreateSeqActivity extends Activity {
             }
         });
 
-        edit.requestFocus();
+        edit.requestFocus(); // Focus on new EditText
+
         return newSwitcher;
     }
 
@@ -222,8 +231,9 @@ public class  CreateSeqActivity extends Activity {
                 // TODO: Settings
                 return true;
             case R.id.action_save:
-                // TODO: Save
+                // Before saving check if valid
                 if (validate()) {
+                    // Save and return the id of the new Seq
                     Intent i = new Intent();
                     i.putExtra(ID_KEY, save());
                     setResult(RESULT_OK, i);
@@ -248,16 +258,20 @@ public class  CreateSeqActivity extends Activity {
     private long save() {
         long id;
 
+
+        // Instantiate and open the data sources
         SeqDataSource dataSource = new SeqDataSource(this);
         StepDataSource stepDataSource = new StepDataSource(this);
         dataSource.open();
         stepDataSource.open();
 
+        // Create the sequence and get the id
         Sequence s = dataSource.createSequence(
                 new Sequence(mTitle, null, mReward)
         );
         id = s.getId();
 
+        // Create and save the steps
         for (String stepString : mSteps) {
             Step step = new Step(stepString);
             step.setSequenceId(id);
@@ -273,6 +287,7 @@ public class  CreateSeqActivity extends Activity {
     /**
      * Validates that the sequence is good: Has a title and at least one step.
      * Displays an error Toast if not.
+     * Note: Call validate before save as validate sets mSteps
      * @return If the sequence is valid
      */
     private boolean validate() {
