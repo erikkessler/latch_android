@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Binds an Array of sequences to a view
@@ -65,6 +67,14 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                 reward.setText(s.getReward());
             }
 
+            // Trigger button
+            ImageView trigger = (ImageView) convertView.findViewById(R.id.trigger_icon);
+            trigger.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "Trigger", Toast.LENGTH_SHORT).show();
+                }
+            });
 
         }
 

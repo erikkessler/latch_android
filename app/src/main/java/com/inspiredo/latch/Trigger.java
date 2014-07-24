@@ -9,6 +9,7 @@ import java.util.Date;
 public class Trigger {
 
     // Constants for the types
+    public static final int NONE = 0;
     public static final int ALARM = 1;
     public static final int NOTIFICATION = 2;
 
@@ -101,7 +102,9 @@ public class Trigger {
     public String toString() {
         String string;
 
-        if (mType == ALARM) {
+        if (mType == NONE) {
+            return "No Trigger set";
+        } else if (mType == ALARM) {
             string = "An alarm at ";
         } else if(mType == NOTIFICATION) {
             string = "A notification at ";
