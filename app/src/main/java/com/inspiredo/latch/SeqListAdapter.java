@@ -1,5 +1,7 @@
 package com.inspiredo.latch;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +17,15 @@ import android.widget.Toast;
  */
 public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
+    // Fragment Manager for displaying the dialog
+    private FragmentManager mManager;
+
     /**
      * Constructor just calls the super constructor
      */
-    public SeqListAdapter(Context context, int resource) {
+    public SeqListAdapter(Context context, int resource, FragmentManager manager) {
         super(context, resource);
+        mManager = manager;
     }
 
     @Override
@@ -74,6 +80,8 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                 public void onClick(View v) {
                     Toast.makeText(getContext(),
                             s.getTrigger().toString(), Toast.LENGTH_SHORT).show();
+                    DialogFragment triggerDialog = new TriggerDialog();
+                    triggerDialog.show(mManager, "trigger");
                 }
             });
 

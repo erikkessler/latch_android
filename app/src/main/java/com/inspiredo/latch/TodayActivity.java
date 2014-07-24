@@ -18,7 +18,8 @@ import java.util.List;
  * Activity that gets launched at the start. Displays the day's sequences, allows user
  * to mark steps as complete, and add new sequences/steps
  */
-public class TodayActivity extends Activity {
+public class TodayActivity extends Activity
+        implements TriggerDialog.TriggerDialogListener{
 
     // Request code for creating a sequence
     static final int        CREATE_SEQ_REQUEST = 1;
@@ -56,7 +57,7 @@ public class TodayActivity extends Activity {
         });
 
         // Adapter for sequences
-        mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq);
+        mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager());
 
         // Get all the sequences and add them to the adapter
         Runnable getSequences = new Runnable() {
@@ -140,4 +141,8 @@ public class TodayActivity extends Activity {
         super.onPause();
     }
 
+    @Override
+    public void onDialogPositiveClick() {
+
+    }
 }

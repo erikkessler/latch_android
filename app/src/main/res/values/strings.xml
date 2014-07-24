@@ -13,5 +13,6 @@
     <string name="create_title_hint">Title</string>
     <string name="create_reward_hint">Reward</string>
     <string name="step_title_hint">Step Title</string>
+    <string name="set">Set</string>
 
 </resources>
