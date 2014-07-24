@@ -32,7 +32,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         }
 
         // Get the sequence corresponding to the position
-        Sequence s = getItem(position);
+        final Sequence s = getItem(position);
 
         if (s != null) {
             // Set the title
@@ -72,9 +72,22 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             trigger.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), "Trigger", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),
+                            s.getTrigger().toString(), Toast.LENGTH_SHORT).show();
                 }
             });
+
+            // Set correct icon
+            if (s.getTrigger().getType() == Trigger.ALARM) {
+                trigger.setImageDrawable(getContext().getResources()
+                        .getDrawable(R.drawable.ic_action_alarms));
+            } else if (s.getTrigger().getType() == Trigger.NOTIFICATION) {
+                trigger.setImageDrawable(getContext().getResources()
+                        .getDrawable(R.drawable.ic_action_chat));
+            } else if (s.getTrigger().getType() == Trigger.NONE) {
+                trigger.setImageDrawable(getContext().getResources()
+                        .getDrawable(R.drawable.ic_action_add_alarm));
+            }
 
         }
 

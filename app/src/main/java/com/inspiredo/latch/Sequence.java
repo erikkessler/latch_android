@@ -29,6 +29,11 @@ public class Sequence {
     private long mId;
 
     /**
+     * Trigger for the Sequence
+     */
+    private Trigger mTrigger;
+
+    /**
      * Construct a sequence with only a name
      * @param title The seq title
      */
@@ -112,6 +117,22 @@ public class Sequence {
      */
     public long getId() {
         return mId;
+    }
+
+    /**
+     * Set the trigger
+     * @param t The Trigger
+     */
+    public void setTrigger(Trigger t) {
+        mTrigger = t;
+    }
+
+    /**
+     * Get the trigger
+     * @return The Sequence's Trigger
+     */
+    public Trigger getTrigger() {
+        return mTrigger;
     }
 
     @Override

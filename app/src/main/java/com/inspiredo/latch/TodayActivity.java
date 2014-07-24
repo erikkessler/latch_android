@@ -111,10 +111,12 @@ public class TodayActivity extends Activity {
                     mDataSource.open();
                     Sequence newS = mDataSource.getSequence(newId);
                     List<Step> newSteps = mDataSource.getSteps(newId);
+                    Trigger t = mDataSource.getSeqTrigger(newId);
 
                     // Add the new new Sequence
                     if (newS != null) {
                         newS.setSteps(newSteps);
+                        newS.setTrigger(t);
                         mSequenceAdapter.add(newS);
                         mSequenceAdapter.notifyDataSetChanged();
                     }

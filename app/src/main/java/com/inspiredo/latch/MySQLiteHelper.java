@@ -21,13 +21,13 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     // Shared column names
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_SEQ = "seq_id";
 
     // Sequence column names
     public static final String COLUMN_REWARD = "reward";
 
     // Step column names
     public static final String COLUMN_COMPLETE = "complete";
-    public static final String COLUMN_SEQ = "seq_id";
 
     // Trigger column names
     public static final String COLUMN_TIME = "time";
@@ -50,7 +50,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + TABLE_TRIGGERS + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_TIME
             + " datetime, " + COLUMN_TYPE
-            + " integer);";
+            + " integer, " + COLUMN_SEQ + " integer);";
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

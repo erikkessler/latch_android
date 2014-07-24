@@ -31,7 +31,8 @@ public class Trigger {
      * @param type Type of notification
      */
     public Trigger(Date time, int type) {
-
+        mTime = time;
+        mType = type;
     }
 
     /**

@@ -6,7 +6,11 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,6 +79,7 @@ public class MySQLDataSource {
         while (!cursor.isAfterLast()) {
             Sequence sequence = cursorToSeq(cursor);
             sequence.setSteps(getSteps(sequence.getId()));
+            sequence.setTrigger(getSeqTrigger(sequence.getId()));
             sequences.add(sequence);
             cursor.moveToNext();
         }
@@ -202,6 +207,55 @@ public class MySQLDataSource {
     }
 
     //
+    // * TRIGGER CRUD ACTIONS *
+    //
+
+    /**
+     * Save a Trigger to the DataBase
+     * @param t The Trigger to save
+     * @return The created Trigger
+     */
+    public Trigger createTrigger(Trigger t) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_TIME, t.getTime().toString());
+        values.put(MySQLiteHelper.COLUMN_TYPE, t.getType());
+        values.put(MySQLiteHelper.COLUMN_SEQ, t.getSequenceId());
+
+        long insertId = database.insert(MySQLiteHelper.TABLE_TRIGGERS, null,
+                values);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TRIGGERS,
+                null, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+                null, null, null);
+        cursor.moveToFirst();
+        Trigger newTrigger = cursorToTrigger(cursor);
+        cursor.close();
+        return newTrigger;
+    }
+
+    /**
+     * Get Trigger belonging to a Sequence
+     * @param id Id of the Sequence
+     * @return The Trigger
+     */
+    public Trigger getSeqTrigger(long id) {
+        Trigger t = new Trigger(null, Trigger.NONE);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TRIGGERS,
+                null, MySQLiteHelper.COLUMN_SEQ +"=?",
+                new String[] {id +""}, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            t = cursorToTrigger(cursor);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return t;
+    }
+
+    //
     // * CURSOR CONVERTER METHODS *
     //
 
@@ -228,5 +282,26 @@ public class MySQLDataSource {
         step.setComplete(cursor.getInt(2) == 1);
         step.setSequenceId(cursor.getLong(3));
         return step;
+    }
+
+    /**
+     * Convert a cursor to a Trigger object
+     * @param cursor Cursor from the DB query
+     * @return The Trigger created
+     */
+    private Trigger cursorToTrigger(Cursor cursor) {
+        Date d;
+        try {
+            d = new SimpleDateFormat().parse(cursor.getString(1));
+        } catch (ParseException e) {
+            d = null;
+        }
+        Trigger trigger = new Trigger(
+                d,
+                cursor.getInt(2)
+        );
+        trigger.setId(cursor.getLong(0));
+        trigger.setSequenceId(cursor.getLong(3));
+        return trigger;
     }
 }
