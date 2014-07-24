@@ -25,8 +25,7 @@ public class TodayActivity extends Activity {
     private SeqListAdapter  mSequenceAdapter;
 
     // Data sources for Sequences and Steps
-    private SeqDataSource   mSeqDataSource;
-    private StepDataSource  mStepDataSource;
+    private MySQLDataSource mDataSource;
 
 
     @Override
@@ -35,10 +34,8 @@ public class TodayActivity extends Activity {
         setContentView(R.layout.activity_today);
 
         // Instantiate and open the data sources
-        mSeqDataSource = new SeqDataSource(this);
-        mStepDataSource = new StepDataSource(this);
-        mSeqDataSource.open();
-        mStepDataSource.open();
+        mDataSource = new MySQLDataSource(this);
+        mDataSource.open();
 
         // Setup the list
         final ListView seqList = (ListView) findViewById(R.id.today_seq_list);
@@ -49,7 +46,7 @@ public class TodayActivity extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Sequence s = (Sequence) seqList.getItemAtPosition(position);
-                mSeqDataSource.deleteSequence(s);
+                mDataSource.deleteSequence(s);
                 mSequenceAdapter.remove(s);
                 mSequenceAdapter.notifyDataSetChanged();
                 return true;
@@ -63,7 +60,7 @@ public class TodayActivity extends Activity {
         Runnable getSequences = new Runnable() {
             @Override
             public void run() {
-                mSequenceAdapter.addAll(mSeqDataSource.getAllSequences());
+                mSequenceAdapter.addAll(mDataSource.getAllSequences());
                 mSequenceAdapter.notifyDataSetChanged();
             }
         };
@@ -109,9 +106,9 @@ public class TodayActivity extends Activity {
 
                 // An ID was passed
                 if (newId != -1) {
-                    mSeqDataSource.open();
-                    Sequence newS = mSeqDataSource.getSequence(newId);
-                    List<Step> newSteps = mSeqDataSource.getSteps(newId);
+                    mDataSource.open();
+                    Sequence newS = mDataSource.getSequence(newId);
+                    List<Step> newSteps = mDataSource.getSteps(newId);
 
                     // Add the new new Sequence
                     if (newS != null) {
@@ -127,16 +124,15 @@ public class TodayActivity extends Activity {
     // Reopen the data sources
     @Override
     protected void onResume() {
-        mSeqDataSource.open();
-        mStepDataSource.open();
+        mDataSource.open();
         super.onResume();
     }
 
     // Close the data sources
     @Override
     protected void onPause() {
-        mSeqDataSource.close();
-        mStepDataSource.close();
+        mDataSource.close();
+
         super.onPause();
     }
 

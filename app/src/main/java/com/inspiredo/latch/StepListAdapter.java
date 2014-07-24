@@ -67,7 +67,7 @@ public class StepListAdapter extends ArrayAdapter<Step> implements AdapterView.O
         TextView tv = (TextView) view.findViewById(R.id.seq_step_title);
 
         // Toggle completeness and act accordingly
-        StepDataSource dataSource = new StepDataSource(mContext);
+        MySQLDataSource dataSource = new MySQLDataSource(mContext);
         dataSource.open();
         if (s.toggleComplete()) {
             // Step complete

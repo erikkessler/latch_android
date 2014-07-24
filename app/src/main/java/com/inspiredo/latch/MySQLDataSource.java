@@ -10,34 +10,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Maintains connection to the database. Allows for CRUD operations
+ * Allows for persistence and retrieval of data using the local SQLite database.
  */
-public class SeqDataSource {
+public class MySQLDataSource {
 
     // Database fields
-    private SQLiteDatabase      database;
-    private SeqSQLiteHelper     dbHelper;
-    private StepSQLiteHelper    stepDbHelper;
-    private SQLiteDatabase      stepDatabase;
-    private String[]            allColumns = { SeqSQLiteHelper.COLUMN_ID,
-            SeqSQLiteHelper.COLUMN_TITLE, SeqSQLiteHelper.COLUMN_REWARD };
+    private SQLiteDatabase  database;
+    private MySQLiteHelper  dbHelper;
 
     // Constructor sets the helpers
-    // Need both Sequences and Steps as steps have sequences
-    public SeqDataSource(Context context) {
-        dbHelper = new SeqSQLiteHelper(context);
-        stepDbHelper = new StepSQLiteHelper(context);
+    public MySQLDataSource(Context context) {
+        dbHelper = new MySQLiteHelper(context);
     }
 
     public void open() throws SQLException {
         database = dbHelper.getWritableDatabase();
-        stepDatabase = stepDbHelper.getWritableDatabase();
     }
 
     public void close() {
         dbHelper.close();
-        stepDbHelper.close();
     }
+
+    //
+    // * SEQUENCE CRUD ACTIONS *
+    //
 
     /**
      * Creates a database entry for a passed sequence
@@ -47,16 +43,16 @@ public class SeqDataSource {
     public Sequence createSequence(Sequence seq) {
         // Put the content into a ContentValue
         ContentValues values = new ContentValues();
-        values.put(SeqSQLiteHelper.COLUMN_TITLE, seq.getTitle());
-        values.put(SeqSQLiteHelper.COLUMN_REWARD, seq.getReward());
+        values.put(MySQLiteHelper.COLUMN_TITLE, seq.getTitle());
+        values.put(MySQLiteHelper.COLUMN_REWARD, seq.getReward());
 
         // Insert into the database
-        long insertId = database.insert(SeqSQLiteHelper.TABLE_SEQUENCES, null,
+        long insertId = database.insert(MySQLiteHelper.TABLE_SEQUENCES, null,
                 values);
 
         // Get the Sequence from the database
-        Cursor cursor = database.query(SeqSQLiteHelper.TABLE_SEQUENCES,
-                allColumns, SeqSQLiteHelper.COLUMN_ID + " = " + insertId, null,
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
+                null, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
         Sequence newSequence = cursorToSeq(cursor);
@@ -72,8 +68,8 @@ public class SeqDataSource {
         List<Sequence> sequences = new ArrayList<Sequence>();
 
         // Query the database
-        Cursor cursor = database.query(SeqSQLiteHelper.TABLE_SEQUENCES,
-                allColumns, null, null, null, null, null);
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
+                null, null, null, null, null, null);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -94,8 +90,8 @@ public class SeqDataSource {
      */
     public Sequence getSequence(long id) {
         // Query the database
-        Cursor cursor = database.query(SeqSQLiteHelper.TABLE_SEQUENCES,
-                null, StepSQLiteHelper.COLUMN_ID +"=?",
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
+                null, MySQLiteHelper.COLUMN_ID +"=?",
                 new String[] {id +""}, null, null, null);
 
         // Create the Sequence from the cursor
@@ -109,6 +105,45 @@ public class SeqDataSource {
     }
 
     /**
+     * Remove a sequence from the database
+     * @param sequence Sequence to remove
+     */
+    public void deleteSequence(Sequence sequence) {
+        long id = sequence.getId();
+        database.delete(MySQLiteHelper.TABLE_SEQUENCES,
+                MySQLiteHelper.COLUMN_ID + " = " + id, null);
+        database.delete(MySQLiteHelper.TABLE_STEPS,
+                MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
+    }
+
+    //
+    // * STEP CRUD ACTIONS *
+    //
+
+    /**
+     * Saves a Step to the database
+     * @param step Step to save
+     * @return The Step saved
+     */
+    public Step createStep(Step step) {
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_TITLE, step.getTitle());
+        values.put(MySQLiteHelper.COLUMN_COMPLETE, step.isComplete());
+        values.put(MySQLiteHelper.COLUMN_SEQ, step.getSequenceId());
+
+        long insertId = database.insert(MySQLiteHelper.TABLE_STEPS, null,
+                values);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_STEPS,
+                null, MySQLiteHelper.COLUMN_ID + " = " + insertId, null,
+                null, null, null);
+        cursor.moveToFirst();
+        Step newStep = cursorToStep(cursor);
+        cursor.close();
+        return newStep;
+    }
+
+    /**
      * Get all the steps belonging to a Sequence
      * @param id The Id of the sequence to get steps for
      * @return List of the Sequence's steps
@@ -116,8 +151,8 @@ public class SeqDataSource {
     public List<Step> getSteps(long id) {
         List<Step> steps = new ArrayList<Step>();
 
-        Cursor cursor = stepDatabase.query(StepSQLiteHelper.TABLE_STEPS,
-                null, StepSQLiteHelper.COLUMN_SEQ +"=?",
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_STEPS,
+                null, MySQLiteHelper.COLUMN_SEQ +"=?",
                 new String[] {id +""}, null, null, null);
 
         cursor.moveToFirst();
@@ -132,16 +167,43 @@ public class SeqDataSource {
     }
 
     /**
-     * Remove a sequence from the database
-     * @param sequence Sequence to remove
+     * Get all steps in the database
+     * @return List of all the Steps
      */
-    public void deleteSequence(Sequence sequence) {
-        long id = sequence.getId();
-        database.delete(SeqSQLiteHelper.TABLE_SEQUENCES,
-                SeqSQLiteHelper.COLUMN_ID + " = " + id, null);
-        stepDatabase.delete(StepSQLiteHelper.TABLE_STEPS,
-                StepSQLiteHelper.COLUMN_SEQ + " = " + id, null);
+    public List<Step> getAllSteps() {
+        List<Step> steps = new ArrayList<Step>();
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
+                null, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Step step = cursorToStep(cursor);
+            steps.add(step);
+            cursor.moveToNext();
+        }
+        // make sure to close the cursor
+        cursor.close();
+        return steps;
     }
+
+    /**
+     * Change the completeness of a Step
+     * @param step Step to change
+     * @param complete State to set it to
+     */
+    public void completeStep(Step step, boolean complete) {
+        long id = step.getId();
+
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_COMPLETE, complete);
+        database.update(MySQLiteHelper.TABLE_STEPS, values,
+                MySQLiteHelper.COLUMN_ID + " = " + id, null);
+    }
+
+    //
+    // * CURSOR CONVERTER METHODS *
+    //
 
     /**
      * Convert a cursor to a Sequence object

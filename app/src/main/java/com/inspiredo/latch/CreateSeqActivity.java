@@ -260,10 +260,8 @@ public class  CreateSeqActivity extends Activity {
 
 
         // Instantiate and open the data sources
-        SeqDataSource dataSource = new SeqDataSource(this);
-        StepDataSource stepDataSource = new StepDataSource(this);
+        MySQLDataSource dataSource = new MySQLDataSource(this);
         dataSource.open();
-        stepDataSource.open();
 
         // Create the sequence and get the id
         Sequence s = dataSource.createSequence(
@@ -275,11 +273,10 @@ public class  CreateSeqActivity extends Activity {
         for (String stepString : mSteps) {
             Step step = new Step(stepString);
             step.setSequenceId(id);
-            stepDataSource.createStep(step);
+            dataSource.createStep(step);
         }
 
         dataSource.close();
-        stepDataSource.close();
 
         return id;
     }
