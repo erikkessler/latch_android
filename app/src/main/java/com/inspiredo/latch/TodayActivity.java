@@ -3,6 +3,7 @@ package com.inspiredo.latch;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.AlarmClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -143,6 +146,16 @@ public class TodayActivity extends Activity
 
     @Override
     public void onDialogPositiveClick(Trigger t) {
-
+        // TODO: Save the Trigger to the Sequence
+        if (t.getType() == Trigger.ALARM) {
+            // Create an Alarm
+            Calendar cal = GregorianCalendar.getInstance();
+            cal.setTime(t.getTime());
+            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+            i.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
+            i.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
+            i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+            startActivity(i);
+        }
     }
 }
