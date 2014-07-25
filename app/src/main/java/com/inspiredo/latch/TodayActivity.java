@@ -1,6 +1,9 @@
 package com.inspiredo.latch;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.AlarmClock;
@@ -156,6 +159,15 @@ public class TodayActivity extends Activity
             i.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
             i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
             startActivity(i);
+        } else if (t.getType() == Trigger.NOTIFICATION) {
+            Calendar cal = GregorianCalendar.getInstance();
+            cal.setTime(t.getTime());
+            AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(this, TriggerIntentService.class);
+            // TODO: Get the actual sequence name
+            i.putExtra(TriggerIntentService.SEQUENCE_TITLE, "Morning");
+            PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+            mgr.setExact(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), pi);
         }
     }
 }
