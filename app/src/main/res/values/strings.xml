@@ -14,5 +14,6 @@
     <string name="create_reward_hint">Reward</string>
     <string name="step_title_hint">Step Title</string>
     <string name="set">Set</string>
+    <string name="trigger_alarm">Alarm</string>
 
 </resources>

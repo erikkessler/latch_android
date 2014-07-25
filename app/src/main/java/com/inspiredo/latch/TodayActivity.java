@@ -142,7 +142,7 @@ public class TodayActivity extends Activity
     }
 
     @Override
-    public void onDialogPositiveClick() {
+    public void onDialogPositiveClick(Trigger t) {
 
     }
 }

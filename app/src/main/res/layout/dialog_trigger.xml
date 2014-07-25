@@ -4,4 +4,18 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TimePicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tigger_timepicker"
+        android:layout_gravity="center"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trigger_alarm"
+        android:id="@+id/trigger_alarm_cb"
+        android:layout_gravity="center"/>
+
 </LinearLayout>
