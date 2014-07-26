@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.AlarmClock;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -140,7 +141,7 @@ public class TodayActivity extends Activity
     @Override
     public void onDialogPositiveClick(Trigger t) {
         // Save the Trigger
-        t = mDataSource.createTrigger(t);
+        Log.d("Trigger", mDataSource.createTrigger(t).toString());
 
         // Sequence that the Trigger belongs to
         Sequence seq = mDataSource.getSequence(t.getSequenceId());

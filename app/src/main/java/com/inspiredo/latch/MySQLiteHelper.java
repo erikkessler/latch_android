@@ -49,7 +49,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_TRIGGERS = "create table "
             + TABLE_TRIGGERS + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_TIME
-            + " datetime, " + COLUMN_TYPE
+            + " integer, " + COLUMN_TYPE
             + " integer, " + COLUMN_SEQ + " integer);";
 
     public MySQLiteHelper(Context context) {

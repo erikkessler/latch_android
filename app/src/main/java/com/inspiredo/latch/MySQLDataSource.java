@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -223,7 +224,8 @@ public class MySQLDataSource {
      */
     public Trigger createTrigger(Trigger t) {
         ContentValues values = new ContentValues();
-        values.put(MySQLiteHelper.COLUMN_TIME, t.getTime().toString());
+        Log.d("Tigger", t.getTime().getTime() + "");
+        values.put(MySQLiteHelper.COLUMN_TIME, t.getTime().getTime());
         values.put(MySQLiteHelper.COLUMN_TYPE, t.getType());
         values.put(MySQLiteHelper.COLUMN_SEQ, t.getSequenceId());
 
@@ -296,12 +298,9 @@ public class MySQLDataSource {
      * @return The Trigger created
      */
     private Trigger cursorToTrigger(Cursor cursor) {
-        Date d;
-        try {
-            d = new SimpleDateFormat().parse(cursor.getString(1));
-        } catch (ParseException e) {
-            d = null;
-        }
+        Date d = new Date();
+        d.setTime(cursor.getLong(1));
+
         Trigger trigger = new Trigger(
                 d,
                 cursor.getInt(2)
