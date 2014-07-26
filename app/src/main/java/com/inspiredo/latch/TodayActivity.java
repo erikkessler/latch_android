@@ -11,8 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -149,23 +147,27 @@ public class TodayActivity extends Activity
 
     @Override
     public void onDialogPositiveClick(Trigger t) {
+        // Sequence that the Trigger belongs to
         Sequence seq = mDataSource.getSequence(t.getSequenceId());
+
+        // Time that the notification/alarm should trigger
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.setTime(t.getTime());
+
         // TODO: Save the Trigger to the Sequence
         if (t.getType() == Trigger.ALARM) {
-            // Create an Alarm
-            Calendar cal = GregorianCalendar.getInstance();
-            cal.setTime(t.getTime());
+
+            // Create the alarm
             Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
             i.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
             i.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
             i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
             startActivity(i);
         } else if (t.getType() == Trigger.NOTIFICATION) {
-            Calendar cal = GregorianCalendar.getInstance();
-            cal.setTime(t.getTime());
+
+            // Use AlarmManager to create notification at correct time
             AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(this, TriggerIntentService.class);
-            // TODO: Get the actual sequence name
             i.putExtra(TriggerIntentService.SEQUENCE_TITLE, seq.getTitle());
             PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
             mgr.setExact(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), pi);

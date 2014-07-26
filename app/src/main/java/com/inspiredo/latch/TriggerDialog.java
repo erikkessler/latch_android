@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
@@ -24,7 +22,7 @@ public class TriggerDialog extends DialogFragment {
     // Use this instance of the interface to deliver action events
     TriggerDialogListener mListener;
 
-    // the fragment initialization parameters
+    // The fragment initialization parameters
     private static final String ARG_SEQ = "seq_id";
 
     // Id of the owning Sequence
