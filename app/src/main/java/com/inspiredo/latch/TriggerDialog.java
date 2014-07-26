@@ -24,9 +24,40 @@ public class TriggerDialog extends DialogFragment {
     // Use this instance of the interface to deliver action events
     TriggerDialogListener mListener;
 
+    // the fragment initialization parameters
+    private static final String ARG_SEQ = "seq_id";
+
+    // Id of the owning Sequence
+    private long mSeqId;
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param seqId Sequence of the owning id
+     * @return A new instance of fragment BlankFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static TriggerDialog newInstance(long seqId) {
+        TriggerDialog fragment = new TriggerDialog();
+        Bundle args = new Bundle();
+        args.putLong(ARG_SEQ, seqId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    public TriggerDialog() {
+        // Required empty public constructor
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Get the params
+        if (getArguments() != null) {
+            mSeqId = getArguments().getLong(ARG_SEQ);
+        }
+
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -58,7 +89,9 @@ public class TriggerDialog extends DialogFragment {
                         }
 
                         // Create and return the Trigger
-                        mListener.onDialogPositiveClick(new Trigger(d, type));
+                        Trigger t = new Trigger(d, type);
+                        t.setSequenceId(mSeqId);
+                        mListener.onDialogPositiveClick(t);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

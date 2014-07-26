@@ -78,10 +78,13 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             trigger.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(),
-                            s.getTrigger().toString(), Toast.LENGTH_SHORT).show();
-                    DialogFragment triggerDialog = new TriggerDialog();
-                    triggerDialog.show(mManager, "trigger");
+                    if (s.getTrigger().getType() == Trigger.NONE) {
+                        DialogFragment triggerDialog = TriggerDialog.newInstance(s.getId());
+                        triggerDialog.show(mManager, "trigger");
+                    } else {
+                        Toast.makeText(getContext(),
+                                s.getTrigger().toString(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
 

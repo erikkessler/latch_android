@@ -149,6 +149,7 @@ public class TodayActivity extends Activity
 
     @Override
     public void onDialogPositiveClick(Trigger t) {
+        Sequence seq = mDataSource.getSequence(t.getSequenceId());
         // TODO: Save the Trigger to the Sequence
         if (t.getType() == Trigger.ALARM) {
             // Create an Alarm
@@ -165,7 +166,7 @@ public class TodayActivity extends Activity
             AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(this, TriggerIntentService.class);
             // TODO: Get the actual sequence name
-            i.putExtra(TriggerIntentService.SEQUENCE_TITLE, "Morning");
+            i.putExtra(TriggerIntentService.SEQUENCE_TITLE, seq.getTitle());
             PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
             mgr.setExact(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), pi);
         }
