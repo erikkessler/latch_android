@@ -141,7 +141,7 @@ public class TodayActivity extends Activity
     @Override
     public void onDialogPositiveClick(Trigger t) {
         // Save the Trigger
-        Log.d("Trigger", mDataSource.createTrigger(t).toString());
+        t = mDataSource.createTrigger(t);
 
         // Sequence that the Trigger belongs to
         Sequence seq = mDataSource.getSequence(t.getSequenceId());
