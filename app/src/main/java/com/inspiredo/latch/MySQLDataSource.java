@@ -21,9 +21,13 @@ public class MySQLDataSource {
     private SQLiteDatabase  database;
     private MySQLiteHelper  dbHelper;
 
+    // Context
+    private Context mContext;
+
     // Constructor sets the helpers
     public MySQLDataSource(Context context) {
         dbHelper = new MySQLiteHelper(context);
+        mContext = context;
     }
 
     public void open() throws SQLException {
@@ -117,6 +121,9 @@ public class MySQLDataSource {
         database.delete(MySQLiteHelper.TABLE_SEQUENCES,
                 MySQLiteHelper.COLUMN_ID + " = " + id, null);
         database.delete(MySQLiteHelper.TABLE_STEPS,
+                MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
+        Trigger.delete(getSeqTrigger(id), mContext);
+        database.delete(MySQLiteHelper.TABLE_TRIGGERS,
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
     }
 

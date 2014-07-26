@@ -1,5 +1,9 @@
 package com.inspiredo.latch;
 
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+
 import java.util.Date;
 
 /**
@@ -97,6 +101,12 @@ public class Trigger {
      */
     public long getSequenceId() {
         return mSequenceId;
+    }
+
+    public static void delete(Trigger t, Context context) {
+        Intent i = new Intent(context, TriggerIntentService.class);
+        PendingIntent pi = PendingIntent.getService(context, (int) t.getId(), i, 0);
+        pi.cancel();
     }
 
     @Override

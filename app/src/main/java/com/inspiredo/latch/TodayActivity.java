@@ -114,17 +114,9 @@ public class TodayActivity extends Activity
                 // An ID was passed
                 if (newId != -1) {
                     mDataSource.open();
-                    Sequence newS = mDataSource.getSequence(newId);
-                    List<Step> newSteps = mDataSource.getSteps(newId);
-                    Trigger t = mDataSource.getSeqTrigger(newId);
-
-                    // Add the new new Sequence
-                    if (newS != null) {
-                        newS.setSteps(newSteps);
-                        newS.setTrigger(t);
-                        mSequenceAdapter.add(newS);
-                        mSequenceAdapter.notifyDataSetChanged();
-                    }
+                    mSequenceAdapter.clear();
+                    mSequenceAdapter.addAll(mDataSource.getAllSequences());
+                    mSequenceAdapter.notifyDataSetChanged();
                 }
             }
         }
@@ -147,6 +139,9 @@ public class TodayActivity extends Activity
 
     @Override
     public void onDialogPositiveClick(Trigger t) {
+        // Save the Trigger
+        t = mDataSource.createTrigger(t);
+
         // Sequence that the Trigger belongs to
         Sequence seq = mDataSource.getSequence(t.getSequenceId());
 
@@ -169,7 +164,7 @@ public class TodayActivity extends Activity
             AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(this, TriggerIntentService.class);
             i.putExtra(TriggerIntentService.SEQUENCE_TITLE, seq.getTitle());
-            PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+            PendingIntent pi = PendingIntent.getService(this, (int) t.getId(), i, 0);
             mgr.setExact(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), pi);
         }
     }
