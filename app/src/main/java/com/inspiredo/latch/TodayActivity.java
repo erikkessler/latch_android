@@ -168,5 +168,10 @@ public class TodayActivity extends Activity
             PendingIntent pi = PendingIntent.getService(this, (int) t.getId(), i, 0);
             mgr.setExact(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), pi);
         }
+
+        // Update the UI
+        mSequenceAdapter.clear();
+        mSequenceAdapter.addAll(mDataSource.getAllSequences());
+        mSequenceAdapter.notifyDataSetChanged();
     }
 }

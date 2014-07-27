@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
@@ -62,15 +63,22 @@ public class TriggerDialog extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View dialogLayout = inflater.inflate(R.layout.dialog_trigger, null);
+
+        // Elements of the view
+        final TimePicker time = (TimePicker) dialogLayout
+                .findViewById(R.id.tigger_timepicker);
+        final CheckBox alarm = (CheckBox) dialogLayout
+                .findViewById(R.id.trigger_alarm_cb);
+
+        final CheckBox tomorrow = (CheckBox) dialogLayout
+                .findViewById(R.id.trigger_tomorrow_cb);
+
         builder.setView(dialogLayout)
                 // Add action buttons
                 .setPositiveButton(R.string.set, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        TimePicker time = (TimePicker) dialogLayout
-                                .findViewById(R.id.tigger_timepicker);
-                        CheckBox alarm = (CheckBox) dialogLayout
-                                .findViewById(R.id.trigger_alarm_cb);
+
 
                         // Get the time
                         Calendar cal = Calendar.getInstance();
@@ -78,7 +86,14 @@ public class TriggerDialog extends DialogFragment {
                         cal.set(Calendar.MINUTE, time.getCurrentMinute());
                         cal.set(Calendar.SECOND, 0);
                         cal.set(Calendar.MILLISECOND, 0);
+
+                        // Add a day if needed
+                        if (tomorrow.isChecked() && !alarm.isChecked()) {
+                            cal.add(Calendar.DATE, 1);
+                        }
+
                         Date d = cal.getTime();
+
 
                         // Get the type
                         int type = Trigger.NOTIFICATION;
@@ -97,6 +112,18 @@ public class TriggerDialog extends DialogFragment {
                         TriggerDialog.this.getDialog().cancel();
                     }
                 });
+
+        // Hide the tomorrow checkbox when alarm is selected
+        alarm.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    tomorrow.setVisibility(View.GONE);
+                } else {
+                    tomorrow.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         return builder.create();
     }
