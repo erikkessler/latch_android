@@ -1,10 +1,15 @@
 package com.inspiredo.latch;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.provider.AlarmClock;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Object that represents each instance of a Trigger.
@@ -107,6 +112,42 @@ public class Trigger {
         Intent i = new Intent(context, TriggerIntentService.class);
         PendingIntent pi = PendingIntent.getService(context, (int) t.getId(), i, 0);
         pi.cancel();
+    }
+
+    /**
+     * Static Trigger method for setting the alarm/notification
+     * @param t Trigger to set alarm for
+     * @param c Context
+     * @param title Title of the sequence to display in the notification
+     */
+    public static void createTrigger(Trigger t, Context c, String title) {
+        // Time that the notification/alarm should trigger
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.setTime(t.getTime());
+
+        if (t.getType() == Trigger.ALARM) {
+
+            // Create the alarm
+            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
+            i.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
+            i.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
+            i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
+            c.startActivity(i);
+        } else if (t.getType() == Trigger.NOTIFICATION) {
+
+            // Use AlarmManager to create notification at correct time
+            AlarmManager mgr = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
+            Intent i = new Intent(c, TriggerIntentService.class);
+            i.putExtra(TriggerIntentService.SEQUENCE_TITLE, title);
+            PendingIntent pi = PendingIntent.getService(c, (int) t.getId(), i, 0);
+
+            // Check version to use correct method
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                mgr.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+            } else {
+                mgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+            }
+        }
     }
 
     @Override

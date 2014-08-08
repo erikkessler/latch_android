@@ -5,9 +5,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.AlarmClock;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 /**
  * Activity that gets launched at the start. Displays the day's sequences, allows user
@@ -146,28 +145,8 @@ public class TodayActivity extends Activity
         // Sequence that the Trigger belongs to
         Sequence seq = mDataSource.getSequence(t.getSequenceId());
 
-        // Time that the notification/alarm should trigger
-        Calendar cal = GregorianCalendar.getInstance();
-        cal.setTime(t.getTime());
-
-        // TODO: Save the Trigger to the Sequence
-        if (t.getType() == Trigger.ALARM) {
-
-            // Create the alarm
-            Intent i = new Intent(AlarmClock.ACTION_SET_ALARM);
-            i.putExtra(AlarmClock.EXTRA_HOUR, cal.get(Calendar.HOUR_OF_DAY));
-            i.putExtra(AlarmClock.EXTRA_MINUTES, cal.get(Calendar.MINUTE));
-            i.putExtra(AlarmClock.EXTRA_SKIP_UI, true);
-            startActivity(i);
-        } else if (t.getType() == Trigger.NOTIFICATION) {
-
-            // Use AlarmManager to create notification at correct time
-            AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent i = new Intent(this, TriggerIntentService.class);
-            i.putExtra(TriggerIntentService.SEQUENCE_TITLE, seq.getTitle());
-            PendingIntent pi = PendingIntent.getService(this, (int) t.getId(), i, 0);
-            mgr.setExact(AlarmManager.RTC_WAKEUP,cal.getTimeInMillis(), pi);
-        }
+        // Create the alarm/notification
+       Trigger.createTrigger(t, this, seq.getTitle());
 
         // Update the UI
         mSequenceAdapter.clear();
