@@ -5,6 +5,8 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.os.Vibrator;
 
 /**
  * Called to display a notification
@@ -28,7 +30,8 @@ public class TriggerIntentService extends IntentService {
                 .setShowWhen(true)
                 .setContentText("Just a reminder to start your " +
                 seqName + " sequence")
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_notification)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .build();
         mgr.notify(1, notification);
     }
