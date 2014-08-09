@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.AlarmClock;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -108,6 +109,12 @@ public class Trigger {
         return mSequenceId;
     }
 
+
+    /**
+     * Delete the PendingIntent
+     * @param t Trigger to delete
+     * @param context Context
+     */
     public static void delete(Trigger t, Context context) {
         Intent i = new Intent(context, TriggerIntentService.class);
         PendingIntent pi = PendingIntent.getService(context, (int) t.getId(), i, 0);
@@ -150,6 +157,28 @@ public class Trigger {
         }
     }
 
+    /**
+     * Deletes the entry in the DB and if it is a pending notification,
+     * gets the PendingIntent and cancels it.
+     * @param t The Trigger to cancel
+     * @param c Context
+     */
+    public static void deleteTrigger(Trigger t, Context c) {
+
+        // Open the data source and delete the Trigger
+        MySQLDataSource dataSource = new MySQLDataSource(c);
+        dataSource.open();
+        dataSource.deleteTrigger(t);
+        dataSource.close();
+
+        // Cancel the PendingIntent if needed
+        if (t.getType() == Trigger.NOTIFICATION) {
+            Intent i = new Intent(c, TriggerIntentService.class);
+            PendingIntent pi = PendingIntent.getService(c, (int) t.getId(), i, 0);
+            pi.cancel();
+        }
+    }
+
     @Override
     public String toString() {
         String string;
@@ -158,13 +187,15 @@ public class Trigger {
             return "No Trigger set";
         } else if (mType == ALARM) {
             string = "An alarm at ";
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a");
+            string += sdf.format(mTime);
         } else if(mType == NOTIFICATION) {
             string = "A notification at ";
+            SimpleDateFormat sdf = new SimpleDateFormat("hh:mm a 'on' c");
+            string += sdf.format(mTime);
         } else {
             return "Invalid Trigger type";
         }
-
-        string += mTime;
 
         return string;
     }

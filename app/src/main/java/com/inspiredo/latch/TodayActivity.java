@@ -1,22 +1,14 @@
 package com.inspiredo.latch;
 
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.AlarmClock;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Activity that gets launched at the start. Displays the day's sequences, allows user

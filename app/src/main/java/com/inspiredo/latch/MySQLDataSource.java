@@ -106,6 +106,8 @@ public class MySQLDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             sequence = cursorToSeq(cursor);
+            sequence.setSteps(getSteps(sequence.getId()));
+            sequence.setTrigger(getSeqTrigger(sequence.getId()));
             cursor.moveToNext();
         }
         return sequence;
@@ -259,6 +261,38 @@ public class MySQLDataSource {
 
         cursor.close();
         return t;
+    }
+
+    /**
+     * Get all Triggers in the database
+     * @return List of all the Steps
+     */
+    public List<Trigger> getAllTriggers() {
+        List<Trigger> triggers = new ArrayList<Trigger>();
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TRIGGERS,
+                null, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Trigger trigger = cursorToTrigger(cursor);
+            triggers.add(trigger);
+            cursor.moveToNext();
+        }
+        // make sure to close the cursor
+        cursor.close();
+        return triggers;
+    }
+
+    /**
+     * Delete a Trigger's entry
+     * @param trigger Trigger to remove
+     */
+    public void deleteTrigger(Trigger trigger) {
+        long id = trigger.getId();
+        System.out.println("Comment deleted with id: " + id);
+        database.delete(MySQLiteHelper.TABLE_TRIGGERS, MySQLiteHelper.COLUMN_ID
+                + " = " + id, null);
     }
 
     //

@@ -1,8 +1,10 @@
 package com.inspiredo.latch;
 
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +22,16 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     // Fragment Manager for displaying the dialog
     private FragmentManager mManager;
 
+    // Context
+    private Context mContext;
+
     /**
      * Constructor just calls the super constructor
      */
     public SeqListAdapter(Context context, int resource, FragmentManager manager) {
         super(context, resource);
         mManager = manager;
+        mContext = context;
     }
 
     @Override
@@ -74,10 +80,12 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             }
 
             // Trigger button
-            ImageView trigger = (ImageView) convertView.findViewById(R.id.trigger_icon);
+            final ImageView trigger = (ImageView) convertView.findViewById(R.id.trigger_icon);
+            // Handle clicks
             trigger.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // If there is no Trigger allow creation of one, if there is show time
                     if (s.getTrigger().getType() == Trigger.NONE) {
                         DialogFragment triggerDialog = TriggerDialog.newInstance(s.getId());
                         triggerDialog.show(mManager, "trigger");
@@ -85,6 +93,41 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                         Toast.makeText(getContext(),
                                 s.getTrigger().toString(), Toast.LENGTH_SHORT).show();
                     }
+                }
+            });
+            // Handle Long Clicks
+            trigger.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    // If there is a Trigger allow user to delete it
+                    if (s.getTrigger().getType() != Trigger.NONE) {
+                        // Build the confirmation dialog
+                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which){
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        Trigger.deleteTrigger(s.getTrigger(), mContext);
+                                        trigger.setImageDrawable(mContext.getResources()
+                                                .getDrawable(R.drawable.ic_action_add_alarm));
+                                        s.setTrigger(new Trigger(null, Trigger.NONE));
+                                        break;
+
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        //No button clicked
+                                        break;
+                                }
+                            }
+                        };
+
+                        // Show the confirmation dialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setMessage("Delete Trigger?")
+                                .setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                    }
+
+                    return true;
                 }
             });
 
