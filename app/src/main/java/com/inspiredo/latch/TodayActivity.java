@@ -39,11 +39,34 @@ public class TodayActivity extends Activity
         // Setup the list
         final ListView seqList = (ListView) findViewById(R.id.today_seq_list);
 
+        // Click listener
+        seqList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                View steps = view.findViewById(R.id.seq_step_list);
+                View reward = view.findViewById(R.id.seq_reward);
+
+                if (steps.getVisibility() != View.GONE){
+                    // Expand
+                    steps.setVisibility(View.GONE);
+                    reward.setVisibility(View.GONE);
+                    mSequenceAdapter.addCollapsed(position);
+                } else {
+                    // Collapse
+                    steps.setVisibility(View.VISIBLE);
+                    reward.setVisibility(View.VISIBLE);
+                    mSequenceAdapter.removeCollapsed(position);
+                }
+
+            }
+        });
+
         // Long click listener
         seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                mSequenceAdapter.deleteCollapsed(position);
                 Sequence s = (Sequence) seqList.getItemAtPosition(position);
                 mDataSource.deleteSequence(s);
                 mSequenceAdapter.remove(s);
@@ -51,6 +74,7 @@ public class TodayActivity extends Activity
                 return true;
             }
         });
+
 
         // Adapter for sequences
         mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager());

@@ -14,6 +14,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Binds an Array of sequences to a view
  */
@@ -25,6 +28,9 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     // Context
     private Context mContext;
 
+    // Set of collapsed
+    private Set<Integer> mCollapsed;
+
     /**
      * Constructor just calls the super constructor
      */
@@ -32,6 +38,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         super(context, resource);
         mManager = manager;
         mContext = context;
+        mCollapsed = new TreeSet<Integer>();
     }
 
     @Override
@@ -143,22 +150,15 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                         .getDrawable(R.drawable.ic_action_add_alarm));
             }
 
-            // Clicking on a Sequence expands/collapses it
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (steps.getVisibility() != View.GONE){
-                        // Expand
-                        steps.setVisibility(View.GONE);
-                        reward.setVisibility(View.GONE);
-                    } else {
-                        // Collapse
-                        steps.setVisibility(View.VISIBLE);
-                        reward.setVisibility(View.VISIBLE);
-                    }
-                }
-            });
-
+            // Collapse if needed
+            if (mCollapsed.contains(position)) {
+                steps.setVisibility(View.GONE);
+                reward.setVisibility(View.GONE);
+            } else {
+                steps.setVisibility(View.VISIBLE);
+                reward.setVisibility(View.VISIBLE);
+            }
+                    
         }
 
 
@@ -166,6 +166,27 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         return convertView;
     }
 
+    // Maintainable of collapsed items
+    public void addCollapsed(int pos) {
+        mCollapsed.add(pos);
+    }
 
+    public void removeCollapsed(int pos) {
+        mCollapsed.remove(pos);
+    }
+
+    public void deleteCollapsed(int pos) {
+        removeCollapsed(pos);
+
+        Set<Integer> newSet = new TreeSet<Integer>();
+
+        for (Integer i : mCollapsed) {
+            int adj = i;
+            if (i > pos) adj--;
+            newSet.add(adj);
+        }
+
+        mCollapsed = newSet;
+    }
 
 }
