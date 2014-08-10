@@ -54,7 +54,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             }
 
             // Set the steps
-            ListView steps = (ListView) convertView.findViewById(R.id.seq_step_list);
+            final ListView steps = (ListView) convertView.findViewById(R.id.seq_step_list);
             steps.setFocusable(false); // Needed to allow parent list to be clickable
             steps.setFocusableInTouchMode(false); // Needed to allow parent list to be clickable
             if (steps != null) {
@@ -74,7 +74,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             }
 
             // Set the reward
-            TextView reward = (TextView) convertView.findViewById(R.id.seq_reward);
+            final TextView reward = (TextView) convertView.findViewById(R.id.seq_reward);
             if (reward != null) {
                 reward.setText(s.getReward());
             }
@@ -143,9 +143,29 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                         .getDrawable(R.drawable.ic_action_add_alarm));
             }
 
+            // Clicking on a Sequence expands/collapses it
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (steps.getVisibility() != View.GONE){
+                        // Expand
+                        steps.setVisibility(View.GONE);
+                        reward.setVisibility(View.GONE);
+                    } else {
+                        // Collapse
+                        steps.setVisibility(View.VISIBLE);
+                        reward.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+
         }
+
+
 
         return convertView;
     }
+
+
 
 }
