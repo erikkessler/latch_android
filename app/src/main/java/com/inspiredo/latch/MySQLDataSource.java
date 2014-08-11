@@ -128,6 +128,11 @@ public class MySQLDataSource {
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
     }
 
+    // TODO: IMPLEMENT THIS
+    public void updateSequence(long oldSId, Sequence newS) {
+
+    }
+
     //
     // * STEP CRUD ACTIONS *
     //

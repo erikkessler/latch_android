@@ -16,5 +16,6 @@
     <string name="set">Set</string>
     <string name="trigger_alarm">Alarm</string>
     <string name="trigger_tomorrow">Tomorrow</string>
+    <string name="title_activity_edit_seq">Edit Sequence</string>
 
 </resources>

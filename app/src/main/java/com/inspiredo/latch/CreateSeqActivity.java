@@ -21,7 +21,8 @@ import java.util.ArrayList;
 
 /**
  * Activity that is launched that allows for the creation of a new sequence.
- * Allows setting of title, steps, and reward
+ * Allows setting of title, steps, and reward.
+ * Also allows for editing by passing in the ID of a sequence.
  * TODO: Triggers
  * TODO: Orientation Change
  */
@@ -47,6 +48,11 @@ public class  CreateSeqActivity extends Activity {
 
     // Key for sending back the ID of the created sequence
     public static final String  ID_KEY = "sequence_id";
+
+    // Variables for editing
+    public static final String EDIT_ID_KEY = "edit_sequence_id";
+    private  boolean        mEditing;
+    private long            mEditId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,13 +158,56 @@ public class  CreateSeqActivity extends Activity {
         addStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStepContainer.addView(createStepView());
+                mStepContainer.addView(createStepView(null));
             }
         });
+
+        // Check and handle for editing case
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            mEditId = extras.getLong(EDIT_ID_KEY, -1);
+            mEditing = (mEditId != -1);
+
+            // If editing fill in the data
+            if (mEditing) {
+                // Instantiate and open the data sources
+                MySQLDataSource dataSource = new MySQLDataSource(this);
+                dataSource.open();
+
+                Sequence s = dataSource.getSequence(mEditId);
+                fillFields(s);
+
+                dataSource.close();
+
+                // Change the title
+                setTitle(getString(R.string.title_activity_edit_seq));
+            }
+        }
+    }
+
+    /**
+     * In editing mode this method fills the fields with the data
+     * @param s The sequence to edit
+     */
+    private void fillFields(Sequence s) {
+        // Title
+        mTitle = s.getTitle();
+        mTitleView.setText(mTitle);
+        mTitleEdit.setText(mTitle);
+
+        // Reward
+        mReward = s.getReward();
+        mRewardView.setText(mReward);
+        mRewardEdit.setText(mReward);
+
+        // Steps
+        for(Step step : s.getSteps()) {
+            mStepContainer.addView(createStepView(step));
+        }
     }
 
     // Creates a new StepViewSwitcher
-    private StepViewSwitcher createStepView() {
+    private StepViewSwitcher createStepView(Step step) {
         final StepViewSwitcher newSwitcher = (StepViewSwitcher) getLayoutInflater()
                 .inflate(R.layout.step_switcher,null);
 
@@ -208,7 +257,13 @@ public class  CreateSeqActivity extends Activity {
             }
         });
 
-        edit.requestFocus(); // Focus on new EditText
+        if (step == null) {
+            edit.requestFocus(); // Focus on new EditText
+        } else {
+            view.setText(step.getTitle());
+            edit.setText(step.getTitle());
+            newSwitcher.setString(step.getTitle());
+        }
 
         return newSwitcher;
     }
