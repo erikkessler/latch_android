@@ -128,8 +128,40 @@ public class MySQLDataSource {
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
     }
 
-    // TODO: IMPLEMENT THIS
+    /**
+     * Update an existing Sequence (as defined by its ID)
+     * with the properties and steps of a new Sequence
+     * @param oldSId The id of the Sequence to update
+     * @param newS The new Sequence to save
+     */
     public void updateSequence(long oldSId, Sequence newS) {
+        // Put the content into a ContentValue
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteHelper.COLUMN_TITLE, newS.getTitle());
+        values.put(MySQLiteHelper.COLUMN_REWARD, newS.getReward());
+
+        // Update the database
+        database.update(
+                MySQLiteHelper.TABLE_SEQUENCES,
+                values,
+                MySQLiteHelper.COLUMN_ID + " = " + oldSId, null
+                );
+
+        // Delete all the old Steps
+        database.delete(
+                MySQLiteHelper.TABLE_STEPS,
+                MySQLiteHelper.COLUMN_SEQ + " = " + oldSId, null
+                );
+
+        // Create the new steps
+        for (Step step : newS.getSteps()) {
+            values = new ContentValues();
+            values.put(MySQLiteHelper.COLUMN_TITLE, step.getTitle());
+            values.put(MySQLiteHelper.COLUMN_COMPLETE, step.isComplete());
+            values.put(MySQLiteHelper.COLUMN_SEQ, step.getSequenceId());
+            database.insert(MySQLiteHelper.TABLE_STEPS, null,
+                    values);
+        }
 
     }
 

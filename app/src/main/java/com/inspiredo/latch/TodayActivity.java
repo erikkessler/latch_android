@@ -20,8 +20,9 @@ import android.widget.Toast;
 public class TodayActivity extends Activity
         implements TriggerDialog.TriggerDialogListener{
 
-    // Request code for creating a sequence
+    // Request code for creating a sequence/editing a sequence
     static final int        CREATE_SEQ_REQUEST = 1;
+    static final int        EDIT_SEQ_REQUEST = 2;
 
     // SequenceAdapter
     private SeqListAdapter  mSequenceAdapter;
@@ -85,7 +86,7 @@ public class TodayActivity extends Activity
                                 // Edit button
                                 Intent createSeqIntent = new Intent(self, CreateSeqActivity.class);
                                 createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
-                                startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
+                                startActivityForResult(createSeqIntent, EDIT_SEQ_REQUEST);
                                 break;
                             case DialogInterface.BUTTON_NEUTRAL:
                                 // Delete Button
@@ -169,6 +170,11 @@ public class TodayActivity extends Activity
                     mSequenceAdapter.addAll(mDataSource.getAllSequences());
                     mSequenceAdapter.notifyDataSetChanged();
                 }
+            }
+        } else if(requestCode == EDIT_SEQ_REQUEST) {
+            // Check for a response - get the id of the edited seq
+            if (resultCode == RESULT_OK) {
+                // TODO: UPDATE LIST
             }
         }
     }

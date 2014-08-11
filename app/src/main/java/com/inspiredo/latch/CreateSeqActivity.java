@@ -18,6 +18,7 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Activity that is launched that allows for the creation of a new sequence.
@@ -290,7 +291,13 @@ public class  CreateSeqActivity extends Activity {
                 if (validate()) {
                     // Save and return the id of the new Seq
                     Intent i = new Intent();
-                    i.putExtra(ID_KEY, save());
+
+                    // Either save or update
+                    if (mEditing) {
+                        update();
+                    } else {
+                        i.putExtra(ID_KEY, save());
+                    }
                     setResult(RESULT_OK, i);
                     finish();
                 }
@@ -304,6 +311,28 @@ public class  CreateSeqActivity extends Activity {
                         .show();
                 return true;
         }
+    }
+
+    /**
+     * Updates the sequence and its steps
+     */
+    private void update() {
+        // Instantiate and open the data sources
+        MySQLDataSource dataSource = new MySQLDataSource(this);
+        dataSource.open();
+
+        // Create the Sequence object and add the steps to it
+        Sequence s = new Sequence(mTitle, new Vector<Step>(), mReward);
+        for (String stepString : mSteps) {
+            Step step = new Step(stepString);
+            step.setSequenceId(mEditId);
+            s.addStep(step);
+        }
+
+        // Edit the sequence and get the id
+        dataSource.updateSequence(mEditId, s);
+
+        dataSource.close();
     }
 
     /**
