@@ -1,6 +1,9 @@
 package com.inspiredo.latch;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -46,7 +49,7 @@ public class TodayActivity extends Activity
                 View steps = view.findViewById(R.id.seq_step_list);
                 View reward = view.findViewById(R.id.seq_reward);
 
-                if (steps.getVisibility() != View.GONE){
+                if (steps.getVisibility() != View.GONE) {
                     // Expand
                     steps.setVisibility(View.GONE);
                     reward.setVisibility(View.GONE);
@@ -61,16 +64,48 @@ public class TodayActivity extends Activity
             }
         });
 
-        // Long click listener
+        // Long click listener - dialog to edit or delete
+        final Context self = this;
         seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                mSequenceAdapter.deleteCollapsed(position);
-                Sequence s = (Sequence) seqList.getItemAtPosition(position);
-                mDataSource.deleteSequence(s);
-                mSequenceAdapter.remove(s);
-                mSequenceAdapter.notifyDataSetChanged();
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final Sequence s = (Sequence) seqList.getItemAtPosition(position);
+
+                // Build the confirmation dialog
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                // Cancel Button
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                // Edit button
+                                Intent createSeqIntent = new Intent(self, CreateSeqActivity.class);
+                                createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
+                                startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
+                                break;
+                            case DialogInterface.BUTTON_NEUTRAL:
+                                // Delete Button
+                                mSequenceAdapter.deleteCollapsed(position);
+                                mDataSource.deleteSequence(s);
+                                mSequenceAdapter.remove(s);
+                                mSequenceAdapter.notifyDataSetChanged();
+                                break;
+                        }
+                    }
+                };
+
+                // Show the confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(self);
+                builder.setMessage("Edit or Delete this Sequence?")
+                        .setPositiveButton("Cancel", dialogClickListener)
+                        .setNeutralButton("Delete", dialogClickListener)
+                        .setNegativeButton("Edit", dialogClickListener).show();
+
+
                 return true;
             }
         });
