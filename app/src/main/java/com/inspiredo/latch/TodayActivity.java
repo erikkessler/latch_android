@@ -86,6 +86,7 @@ public class TodayActivity extends Activity
                                 // Edit button
                                 Intent createSeqIntent = new Intent(self, CreateSeqActivity.class);
                                 createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
+                                createSeqIntent.putExtra(CreateSeqActivity.EDIT_POS, position);
                                 startActivityForResult(createSeqIntent, EDIT_SEQ_REQUEST);
                                 break;
                             case DialogInterface.BUTTON_NEUTRAL:
@@ -174,7 +175,19 @@ public class TodayActivity extends Activity
         } else if(requestCode == EDIT_SEQ_REQUEST) {
             // Check for a response - get the id of the edited seq
             if (resultCode == RESULT_OK) {
-                // TODO: UPDATE LIST
+                long seqId = data.getLongExtra(CreateSeqActivity.ID_KEY, -1);
+                int pos = data.getIntExtra(CreateSeqActivity.EDIT_POS, -1); // Position to add to
+
+                // An ID was passed
+                if (seqId != -1) {
+                    mDataSource.open();
+
+                    // Remove and re-add to update the list
+                    Sequence s = mDataSource.getSequence(seqId);
+                    mSequenceAdapter.remove(s);
+                    mSequenceAdapter.insert(s, pos);
+                    mSequenceAdapter.notifyDataSetChanged();
+                }
             }
         }
     }

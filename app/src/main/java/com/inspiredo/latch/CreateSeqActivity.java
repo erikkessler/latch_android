@@ -52,8 +52,10 @@ public class  CreateSeqActivity extends Activity {
 
     // Variables for editing
     public static final String EDIT_ID_KEY = "edit_sequence_id";
+    public static final String EDIT_POS = "edit_pos";
     private  boolean        mEditing;
     private long            mEditId;
+    private int             mPos; // Position of the edited item in the list
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +168,7 @@ public class  CreateSeqActivity extends Activity {
         // Check and handle for editing case
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+            mPos = extras.getInt(EDIT_POS);
             mEditId = extras.getLong(EDIT_ID_KEY, -1);
             mEditing = (mEditId != -1);
 
@@ -182,6 +185,10 @@ public class  CreateSeqActivity extends Activity {
 
                 // Change the title
                 setTitle(getString(R.string.title_activity_edit_seq));
+
+                // Set ViewSwitchers
+                mTitleSwitcher.showNext();
+                mRewardSwitcher.showNext();
             }
         }
     }
@@ -295,6 +302,8 @@ public class  CreateSeqActivity extends Activity {
                     // Either save or update
                     if (mEditing) {
                         update();
+                        i.putExtra(ID_KEY, mEditId);
+                        i.putExtra(EDIT_POS, mPos);
                     } else {
                         i.putExtra(ID_KEY, save());
                     }

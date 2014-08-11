@@ -26,7 +26,7 @@ public class Sequence {
     /**
      * ID for DB Query
      */
-    private long mId;
+    private long mId = -1L;
 
     /**
      * Trigger for the Sequence
@@ -138,5 +138,16 @@ public class Sequence {
     @Override
     public String toString() {
         return mTitle;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Sequence that = (Sequence) o;
+
+        // Equal if their IDs are
+        if (this.getId() != -1L && that.getId() != -1L)
+            return this.getId() == that.getId();
+
+        return super.equals(o);
     }
 }
