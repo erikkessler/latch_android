@@ -51,6 +51,7 @@ public class MySQLDataSource {
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_TITLE, seq.getTitle());
         values.put(MySQLiteHelper.COLUMN_REWARD, seq.getReward());
+        values.put(MySQLiteHelper.COLUMN_POS, seq.getOrder());
 
         // Insert into the database
         long insertId = database.insert(MySQLiteHelper.TABLE_SEQUENCES, null,
@@ -222,7 +223,7 @@ public class MySQLDataSource {
     public List<Step> getAllSteps() {
         List<Step> steps = new ArrayList<Step>();
 
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_STEPS,
                 null, null, null, null, null, null);
 
         cursor.moveToFirst();

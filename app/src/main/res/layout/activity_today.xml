@@ -12,7 +12,7 @@
         android:id="@+id/today_header_title"
          />
 
-    <com.inspiredo.latch.DynamicListView
+    <ListView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/today_seq_list"

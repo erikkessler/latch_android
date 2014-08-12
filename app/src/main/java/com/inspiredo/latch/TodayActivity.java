@@ -49,7 +49,7 @@ public class TodayActivity extends Activity
         mDataSource.open();
 
         // Setup the list
-        final DynamicListView seqList = (DynamicListView) findViewById(R.id.today_seq_list);
+        final ListView seqList = (ListView) findViewById(R.id.today_seq_list);
 
         // Click listener
         seqList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -143,7 +143,6 @@ public class TodayActivity extends Activity
                 List<Sequence> seqs = mDataSource.getAllSequences();
                 mSequenceAdapter.addAll(seqs);
                 mSequenceAdapter.notifyDataSetChanged();
-                seqList.setCheeseList(seqs);
             }
         };
         new Thread(getSequences).run();

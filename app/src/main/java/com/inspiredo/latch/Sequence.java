@@ -34,6 +34,11 @@ public class Sequence {
     private Trigger mTrigger;
 
     /**
+     * Order in the ListView
+     */
+    private int mOrder;
+
+    /**
      * Construct a sequence with only a name
      * @param title The seq title
      */
@@ -133,6 +138,36 @@ public class Sequence {
      */
     public Trigger getTrigger() {
         return mTrigger;
+    }
+
+    /**
+     * Set the order position of the Sequence
+     * @param order
+     */
+    public void setOder(int order) {
+        mOrder = order;
+    }
+
+    /**
+     * Get the order of the Sequence
+     * @return
+     */
+    public int getOrder() {
+        return mOrder;
+    }
+
+    /**
+     * Increment the oder by one
+     */
+    public void incrementOrder() {
+        mOrder++;
+    }
+
+    /**
+     * Decrement the order by one
+     */
+    public void decrementOrder() {
+        mOrder--;
     }
 
     @Override
