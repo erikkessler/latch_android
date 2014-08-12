@@ -128,8 +128,8 @@ public class TodayActivity extends Activity
             int[] array = savedInstanceState.getIntArray(COLLAPSED_KEY);
             if (array != null) {
                 Set<Integer> set = new TreeSet<Integer>();
-                for (int i = 0; i < array.length; i++) {
-                    set.add(array[i]);
+                for (int anArray : array) {
+                    set.add(anArray);
                 }
                 mSequenceAdapter.setCollapsed(set);
             }
