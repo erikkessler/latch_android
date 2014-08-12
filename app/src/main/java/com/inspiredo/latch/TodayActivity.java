@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -48,7 +49,7 @@ public class TodayActivity extends Activity
         mDataSource.open();
 
         // Setup the list
-        final ListView seqList = (ListView) findViewById(R.id.today_seq_list);
+        final DynamicListView seqList = (DynamicListView) findViewById(R.id.today_seq_list);
 
         // Click listener
         seqList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,7 +73,7 @@ public class TodayActivity extends Activity
             }
         });
 
-        // Long click listener - dialog to edit or delete
+        /*// Long click listener - dialog to edit or delete
         final Context self = this;
         seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
@@ -117,7 +118,7 @@ public class TodayActivity extends Activity
 
                 return true;
             }
-        });
+        });*/
 
 
         // Adapter for sequences
@@ -139,8 +140,10 @@ public class TodayActivity extends Activity
         Runnable getSequences = new Runnable() {
             @Override
             public void run() {
-                mSequenceAdapter.addAll(mDataSource.getAllSequences());
+                List<Sequence> seqs = mDataSource.getAllSequences();
+                mSequenceAdapter.addAll(seqs);
                 mSequenceAdapter.notifyDataSetChanged();
+                seqList.setCheeseList(seqs);
             }
         };
         new Thread(getSequences).run();

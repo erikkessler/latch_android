@@ -31,6 +31,8 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     // Set of collapsed
     private Set<Integer> mCollapsed;
 
+    final int INVALID_ID = -1;
+
     /**
      * Constructor just calls the super constructor
      */
@@ -187,6 +189,15 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         }
 
         mCollapsed = newSet;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        if (position < 0 || position >= getCount()) {
+            return INVALID_ID;
+        }
+        Sequence item = getItem(position);
+        return item.getId();
     }
 
     public void setCollapsed(Set<Integer> collapsed) {
