@@ -189,4 +189,12 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         mCollapsed = newSet;
     }
 
+    public void setCollapsed(Set<Integer> collapsed) {
+        mCollapsed = collapsed;
+    }
+
+    public Set<Integer> getCollapsed() {
+        return mCollapsed;
+    }
+
 }

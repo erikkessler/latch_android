@@ -13,6 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Activity that gets launched at the start. Displays the day's sequences, allows user
  * to mark steps as complete, and add new sequences/steps
@@ -29,6 +33,9 @@ public class TodayActivity extends Activity
 
     // Data sources for Sequences and Steps
     private MySQLDataSource mDataSource;
+
+    // Key to bundle the collapsed items
+    static final String        COLLAPSED_KEY = "collapsed_key";
 
 
     @Override
@@ -115,6 +122,18 @@ public class TodayActivity extends Activity
 
         // Adapter for sequences
         mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager());
+
+        // Get collapsed
+        if (savedInstanceState != null) {
+            int[] array = savedInstanceState.getIntArray(COLLAPSED_KEY);
+            if (array != null) {
+                Set<Integer> set = new TreeSet<Integer>();
+                for (int i = 0; i < array.length; i++) {
+                    set.add(array[i]);
+                }
+                mSequenceAdapter.setCollapsed(set);
+            }
+        }
 
         // Get all the sequences and add them to the adapter
         Runnable getSequences = new Runnable() {
@@ -222,5 +241,20 @@ public class TodayActivity extends Activity
         mSequenceAdapter.clear();
         mSequenceAdapter.addAll(mDataSource.getAllSequences());
         mSequenceAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Make collapsed an int[]
+        Set<Integer> collapsed = mSequenceAdapter.getCollapsed();
+        int[] array = new int[collapsed.size()];
+        Iterator<Integer> iterator = collapsed.iterator();
+        for (int i = 0; i < collapsed.size(); i++) {
+            array[i] = iterator.next();
+        }
+
+        outState.putIntArray(COLLAPSED_KEY, array);
     }
 }
