@@ -130,7 +130,7 @@ public class MySQLDataSource {
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
 
         // Decrement the order value of following Sequences
-        changeOrder(sequence.getOrder() + 1, -1, -1);
+        changeRangeOrder(sequence.getOrder() + 1, -1, -1);
     }
 
     /**
@@ -140,7 +140,7 @@ public class MySQLDataSource {
      * @param end The Order value of the last Sequence to change
      * @param delta The amount to change the order by
      */
-    private void changeOrder(int start, int end, int delta) {
+    private void changeRangeOrder(int start, int end, int delta) {
 
         // Query for the entries
         Cursor cursor;
@@ -152,6 +152,7 @@ public class MySQLDataSource {
             cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES, null,
                     MySQLiteHelper.COLUMN_POS + " BETWEEN " + start + " AND " + end,
                     null, null, null, null);
+            cursor.moveToFirst();
         }
 
         // Decrement all the entries
@@ -163,6 +164,36 @@ public class MySQLDataSource {
                     MySQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0), null);
             cursor.moveToNext();
         }
+    }
+
+    /**
+     * Move a Sequence to a specified position
+     * @param s The sequence to move
+     * @param end The ending position
+     */
+    public void moveSequence(Sequence s, int end) {
+        int start = s.getOrder();
+        long id = s.getId();
+
+        // Update the affected surrounding sequences
+        if (start > end) {
+            changeRangeOrder(end, start - 1, 1);
+        } else if (start < end) {
+            changeRangeOrder(start + 1, end, -1);
+        }
+
+        // Update the Sequence itself
+        changeIndividualOrder(id, end);
+
+
+    }
+
+    // Changes the order value in the DB
+    private void changeIndividualOrder(long id, int newPos) {
+        ContentValues vals = new ContentValues();
+        vals.put(MySQLiteHelper.COLUMN_POS, newPos);
+        database.update(MySQLiteHelper.TABLE_SEQUENCES, vals,
+                MySQLiteHelper.COLUMN_ID + " = " + id, null);
     }
 
     /**
@@ -382,7 +413,7 @@ public class MySQLDataSource {
         Sequence sequence = new Sequence(cursor.getString(1));
         sequence.setId(cursor.getLong(0));
         sequence.setReward(cursor.getString(2));
-        sequence.setOder(cursor.getInt(3));
+        sequence.setOrder(cursor.getInt(3));
         return sequence;
     }
 
@@ -416,4 +447,5 @@ public class MySQLDataSource {
         trigger.setSequenceId(cursor.getLong(3));
         return trigger;
     }
+
 }

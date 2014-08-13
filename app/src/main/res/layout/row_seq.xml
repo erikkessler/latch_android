@@ -39,4 +39,28 @@
         android:id="@+id/seq_reward"
         style="@style/seq_reward" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_collapse"
+            android:clickable="true"
+            android:layout_marginRight="8dp"
+            android:id="@+id/move_up"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_action_expand"
+            android:clickable="true"
+            android:layout_marginLeft="8dp"
+            android:id="@+id/move_down"/>
+        </LinearLayout>
+
 </LinearLayout>

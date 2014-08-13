@@ -369,7 +369,7 @@ public class  CreateSeqActivity extends Activity {
 
         // Create the sequence and get the id
         Sequence s = new Sequence(mTitle, null, mReward);
-        s.setOder(mOrder);
+        s.setOrder(mOrder);
         s = dataSource.createSequence(s);
         id = s.getId();
 

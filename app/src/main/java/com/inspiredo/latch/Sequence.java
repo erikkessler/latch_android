@@ -145,7 +145,7 @@ public class Sequence {
      * Set the order position of the Sequence
      * @param order
      */
-    public void setOder(int order) {
+    public void setOrder(int order) {
         mOrder = order;
     }
 

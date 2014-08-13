@@ -44,7 +44,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
         // Inflate the view if needed
         if (convertView == null) {
@@ -152,6 +152,27 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                         .getDrawable(R.drawable.ic_action_add_alarm));
             }
 
+            // Up and down movement
+            ImageView upIcon = (ImageView) convertView.findViewById(R.id.move_up);
+            ImageView downIcon = (ImageView) convertView.findViewById(R.id.move_down);
+            upIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (position != 0) {
+                        moveSequence(position, -1);
+                    }
+                }
+            });
+            downIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (position < getCount() - 1) {
+                        moveSequence(position, 1);
+                    }
+                }
+            });
+
+
             // Collapse if needed
             if (mCollapsed.contains(position)) {
                 steps.setVisibility(View.GONE);
@@ -166,6 +187,26 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
 
         return convertView;
+    }
+
+    // Method to move a Sequence
+    private void moveSequence(int position, int delta) {
+        MySQLDataSource dataSource = new MySQLDataSource(mContext);
+        dataSource.open();
+
+        // Save change to the DB
+        Sequence s = getItem(position);
+        dataSource.moveSequence(s, s.getOrder() + delta);
+
+        s.setOrder(s.getOrder() + delta);
+
+        // Update the ListView
+        remove(s);
+        insert(s, s.getOrder());
+        notifyDataSetChanged();
+
+
+        dataSource.close();
     }
 
     // Maintainable of collapsed items
