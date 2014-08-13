@@ -140,7 +140,7 @@ public class TodayActivity extends Activity
         Runnable getSequences = new Runnable() {
             @Override
             public void run() {
-                List<Sequence> seqs = mDataSource.getAllSequences();
+                List<Sequence> seqs = mDataSource.getAllSequences(MySQLiteHelper.COLUMN_POS);
                 mSequenceAdapter.addAll(seqs);
                 mSequenceAdapter.notifyDataSetChanged();
             }
@@ -192,7 +192,7 @@ public class TodayActivity extends Activity
                 if (newId != -1) {
                     mDataSource.open();
                     mSequenceAdapter.clear();
-                    mSequenceAdapter.addAll(mDataSource.getAllSequences());
+                    mSequenceAdapter.addAll(mDataSource.getAllSequences(MySQLiteHelper.COLUMN_POS));
                     mSequenceAdapter.notifyDataSetChanged();
                 }
             }
@@ -244,7 +244,7 @@ public class TodayActivity extends Activity
 
         // Update the UI
         mSequenceAdapter.clear();
-        mSequenceAdapter.addAll(mDataSource.getAllSequences());
+        mSequenceAdapter.addAll(mDataSource.getAllSequences(MySQLiteHelper.COLUMN_POS));
         mSequenceAdapter.notifyDataSetChanged();
     }
 

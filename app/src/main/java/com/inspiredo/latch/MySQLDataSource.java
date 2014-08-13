@@ -70,13 +70,14 @@ public class MySQLDataSource {
     /**
      * Get all the sequences in the database
      * @return List of the Sequences
+     * @param order How to sort the data
      */
-    public List<Sequence> getAllSequences() {
+    public List<Sequence> getAllSequences(String order) {
         List<Sequence> sequences = new ArrayList<Sequence>();
 
         // Query the database
         Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
-                null, null, null, null, null, null);
+                null, null, null, null, null, order);
 
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
