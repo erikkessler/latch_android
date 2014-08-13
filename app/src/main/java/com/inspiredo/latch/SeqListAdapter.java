@@ -174,7 +174,8 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
 
             // Collapse if needed
-            if (mCollapsed.contains(position)) {
+            //if (mCollapsed.contains(position)) {
+            if (s.getCollapsed()) {
                 steps.setVisibility(View.GONE);
                 reward.setVisibility(View.GONE);
             } else {
@@ -230,15 +231,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         }
 
         mCollapsed = newSet;
-    }
 
-    @Override
-    public long getItemId(int position) {
-        if (position < 0 || position >= getCount()) {
-            return INVALID_ID;
-        }
-        Sequence item = getItem(position);
-        return item.getId();
     }
 
     public void setCollapsed(Set<Integer> collapsed) {
@@ -249,4 +242,12 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         return mCollapsed;
     }
 
+    @Override
+    public long getItemId(int position) {
+        if (position < 0 || position >= getCount()) {
+            return INVALID_ID;
+        }
+        Sequence item = getItem(position);
+        return item.getId();
+    }
 }

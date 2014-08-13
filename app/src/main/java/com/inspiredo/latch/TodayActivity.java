@@ -58,16 +58,17 @@ public class TodayActivity extends Activity
                 View steps = view.findViewById(R.id.seq_step_list);
                 View reward = view.findViewById(R.id.seq_reward);
 
+                mSequenceAdapter.getItem(position).toggleCollapsed();
                 if (steps.getVisibility() != View.GONE) {
                     // Expand
                     steps.setVisibility(View.GONE);
                     reward.setVisibility(View.GONE);
-                    mSequenceAdapter.addCollapsed(position);
+                    //mSequenceAdapter.addCollapsed(position);
                 } else {
                     // Collapse
                     steps.setVisibility(View.VISIBLE);
                     reward.setVisibility(View.VISIBLE);
-                    mSequenceAdapter.removeCollapsed(position);
+                    //mSequenceAdapter.removeCollapsed(position);
                 }
 
             }
@@ -99,7 +100,7 @@ public class TodayActivity extends Activity
                                 break;
                             case DialogInterface.BUTTON_NEUTRAL:
                                 // Delete Button
-                                mSequenceAdapter.deleteCollapsed(position);
+                                //mSequenceAdapter.deleteCollapsed(position);
                                 mDataSource.deleteSequence(s);
                                 mSequenceAdapter.remove(s);
                                 mSequenceAdapter.notifyDataSetChanged();
@@ -124,7 +125,7 @@ public class TodayActivity extends Activity
         // Adapter for sequences
         mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager());
 
-        // Get collapsed
+       /* // Get collapsed
         if (savedInstanceState != null) {
             int[] array = savedInstanceState.getIntArray(COLLAPSED_KEY);
             if (array != null) {
@@ -134,7 +135,7 @@ public class TodayActivity extends Activity
                 }
                 mSequenceAdapter.setCollapsed(set);
             }
-        }
+        }*/
 
         // Get all the sequences and add them to the adapter
         Runnable getSequences = new Runnable() {
@@ -252,7 +253,7 @@ public class TodayActivity extends Activity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // Make collapsed an int[]
+        /*// Make collapsed an int[]
         Set<Integer> collapsed = mSequenceAdapter.getCollapsed();
         int[] array = new int[collapsed.size()];
         Iterator<Integer> iterator = collapsed.iterator();
@@ -260,6 +261,6 @@ public class TodayActivity extends Activity
             array[i] = iterator.next();
         }
 
-        outState.putIntArray(COLLAPSED_KEY, array);
+        outState.putIntArray(COLLAPSED_KEY, array);*/
     }
 }

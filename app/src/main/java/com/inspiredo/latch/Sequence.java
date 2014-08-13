@@ -40,6 +40,11 @@ public class Sequence {
     private int mOrder;
 
     /**
+     * Is the Sequence collapsed
+     */
+    private boolean mCollapsed;
+
+    /**
      * Construct a sequence with only a name
      * @param title The seq title
      */
@@ -169,6 +174,16 @@ public class Sequence {
      */
     public void decrementOrder() {
         mOrder--;
+    }
+
+    // Get the collapsed state
+    public boolean getCollapsed() {
+        return mCollapsed;
+    }
+
+    // Toggle the collapsed state
+    public void toggleCollapsed() {
+        mCollapsed = !mCollapsed;
     }
 
     @Override
