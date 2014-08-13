@@ -127,6 +127,41 @@ public class MySQLDataSource {
         Trigger.delete(getSeqTrigger(id), mContext);
         database.delete(MySQLiteHelper.TABLE_TRIGGERS,
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
+
+        // Decrement the order value of following Sequences
+        changeOrder(sequence.getOrder() + 1, -1, -1);
+    }
+
+    /**
+     * Change the order of a range of Sequences by the delta value.
+     * If end is -1 just does all greater than Start
+     * @param start The Order value of the first one to change
+     * @param end The Order value of the last Sequence to change
+     * @param delta The amount to change the order by
+     */
+    private void changeOrder(int start, int end, int delta) {
+
+        // Query for the entries
+        Cursor cursor;
+        if (end == -1) {
+            cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES, null,
+                    MySQLiteHelper.COLUMN_POS + " >= " + start, null, null, null, null);
+            cursor.moveToFirst();
+        } else {
+            cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES, null,
+                    MySQLiteHelper.COLUMN_POS + " BETWEEN " + start + " AND " + end,
+                    null, null, null, null);
+        }
+
+        // Decrement all the entries
+        while (!cursor.isAfterLast()) {
+            ContentValues vals = new ContentValues();
+            vals.put(MySQLiteHelper.COLUMN_POS,
+                    cursor.getInt(3) + delta);
+            database.update(MySQLiteHelper.TABLE_SEQUENCES, vals,
+                    MySQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0), null);
+            cursor.moveToNext();
+        }
     }
 
     /**
@@ -346,6 +381,7 @@ public class MySQLDataSource {
         Sequence sequence = new Sequence(cursor.getString(1));
         sequence.setId(cursor.getLong(0));
         sequence.setReward(cursor.getString(2));
+        sequence.setOder(cursor.getInt(3));
         return sequence;
     }
 

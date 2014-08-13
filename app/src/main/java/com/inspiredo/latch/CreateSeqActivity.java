@@ -50,12 +50,17 @@ public class  CreateSeqActivity extends Activity {
     // Key for sending back the ID of the created sequence
     public static final String  ID_KEY = "sequence_id";
 
+    // Ordering
+    public static final String ORDER_KEY = "order_key";
+    private int mOrder;
+
     // Variables for editing
     public static final String EDIT_ID_KEY = "edit_sequence_id";
     public static final String EDIT_POS = "edit_pos";
     private  boolean        mEditing;
     private long            mEditId;
     private int             mPos; // Position of the edited item in the list
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,9 +170,11 @@ public class  CreateSeqActivity extends Activity {
             }
         });
 
-        // Check and handle for editing case
+        // Get extras
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
+
+            // Check for the editing case
             mPos = extras.getInt(EDIT_POS);
             mEditId = extras.getLong(EDIT_ID_KEY, -1);
             mEditing = (mEditId != -1);
@@ -190,6 +197,10 @@ public class  CreateSeqActivity extends Activity {
                 mTitleSwitcher.showNext();
                 mRewardSwitcher.showNext();
             }
+
+            // Get order
+            mOrder = extras.getInt(ORDER_KEY);
+
         }
     }
 
@@ -357,9 +368,9 @@ public class  CreateSeqActivity extends Activity {
         dataSource.open();
 
         // Create the sequence and get the id
-        Sequence s = dataSource.createSequence(
-                new Sequence(mTitle, null, mReward)
-        );
+        Sequence s = new Sequence(mTitle, null, mReward);
+        s.setOder(mOrder);
+        s = dataSource.createSequence(s);
         id = s.getId();
 
         // Create and save the steps

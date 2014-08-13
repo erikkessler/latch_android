@@ -73,7 +73,7 @@ public class TodayActivity extends Activity
             }
         });
 
-        /*// Long click listener - dialog to edit or delete
+        // Long click listener - dialog to edit or delete
         final Context self = this;
         seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
@@ -118,7 +118,7 @@ public class TodayActivity extends Activity
 
                 return true;
             }
-        });*/
+        });
 
 
         // Adapter for sequences
@@ -167,6 +167,9 @@ public class TodayActivity extends Activity
             case R.id.action_add:
                 // Launch the sequence creation Activity
                 Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
+                createSeqIntent.putExtra(
+                        CreateSeqActivity.ORDER_KEY, mSequenceAdapter.getCount()
+                );
                 startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
                 return true;
             default:
