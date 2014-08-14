@@ -3,11 +3,9 @@ package com.inspiredo.latch;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.media.Image;
+import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,7 +26,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     private FragmentManager mManager;
 
     // Context
-    private Context mContext;
+    private TodayActivity mContext;
 
     // Set of collapsed
     private Set<Integer> mCollapsed;
@@ -41,7 +39,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     /**
      * Constructor just calls the super constructor
      */
-    public SeqListAdapter(Context context, int resource, FragmentManager manager,
+    public SeqListAdapter(TodayActivity context, int resource, FragmentManager manager,
                           DynamicListView listView) {
         super(context, resource);
         mManager = manager;
@@ -181,6 +179,96 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                     return true;
                 }
             });
+
+            // More actions
+            ImageView moreIcon = (ImageView) convertView.findViewById(R.id.more_actions);
+            moreIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Sequence s = getItem(position);
+
+                    // Build the confirmation dialog
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    // Cancel Button
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // Edit button
+                                    Intent createSeqIntent = new Intent(mContext, CreateSeqActivity.class);
+                                    createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
+                                    createSeqIntent.putExtra(CreateSeqActivity.EDIT_POS, position);
+                                    mContext.startActivityForResult(createSeqIntent,
+                                            TodayActivity.EDIT_SEQ_REQUEST);
+                                    break;
+                                case DialogInterface.BUTTON_NEUTRAL:
+                                    // Delete Button
+                                    MySQLDataSource dataSource = new MySQLDataSource(mContext);
+                                    dataSource.open();
+                                    dataSource.deleteSequence(s);
+                                    remove(s);
+                                    notifyDataSetChanged();
+                                    dataSource.close();
+                                    break;
+                            }
+                        }
+                    };
+
+                    // Show the confirmation dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setMessage("Edit or Delete this Sequence?")
+                            .setPositiveButton("Cancel", dialogClickListener)
+                            .setNeutralButton("Delete", dialogClickListener)
+                            .setNegativeButton("Edit", dialogClickListener).show();
+                }
+            });
+            /*seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                final Sequence s = (Sequence) seqList.getItemAtPosition(position);
+
+                // Build the confirmation dialog
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                // Cancel Button
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                // Edit button
+                                Intent createSeqIntent = new Intent(self, CreateSeqActivity.class);
+                                createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
+                                createSeqIntent.putExtra(CreateSeqActivity.EDIT_POS, position);
+                                startActivityForResult(createSeqIntent, EDIT_SEQ_REQUEST);
+                                break;
+                            case DialogInterface.BUTTON_NEUTRAL:
+                                // Delete Button
+                                //mSequenceAdapter.deleteCollapsed(position);
+                                mDataSource.deleteSequence(s);
+                                mSequenceAdapter.remove(s);
+                                mSequenceAdapter.notifyDataSetChanged();
+                                break;
+                        }
+                    }
+                };
+
+                // Show the confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(self);
+                builder.setMessage("Edit or Delete this Sequence?")
+                        .setPositiveButton("Cancel", dialogClickListener)
+                        .setNeutralButton("Delete", dialogClickListener)
+                        .setNegativeButton("Edit", dialogClickListener).show();
+
+
+                return true;
+            }
+        });*/
 
             // Collapse if needed
             //if (mCollapsed.contains(position)) {
