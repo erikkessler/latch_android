@@ -5,7 +5,9 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.Image;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -31,16 +33,21 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     // Set of collapsed
     private Set<Integer> mCollapsed;
 
+    // Dynamic Listview
+    private DynamicListView mListView;
+
     final int INVALID_ID = -1;
 
     /**
      * Constructor just calls the super constructor
      */
-    public SeqListAdapter(Context context, int resource, FragmentManager manager) {
+    public SeqListAdapter(Context context, int resource, FragmentManager manager,
+                          DynamicListView listView) {
         super(context, resource);
         mManager = manager;
         mContext = context;
         mCollapsed = new TreeSet<Integer>();
+        mListView = listView;
     }
 
     @Override
@@ -167,7 +174,13 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                     moveDown(position);
                 }
             });
-
+            upIcon.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mListView.startMobile();
+                    return true;
+                }
+            });
 
             // Collapse if needed
             //if (mCollapsed.contains(position)) {

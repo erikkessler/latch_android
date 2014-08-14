@@ -97,6 +97,38 @@ public class DynamicListView extends ListView {
         setOnScrollListener(mScrollListener);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mSmoothScrollAmountAtEdge = (int) (SMOOTH_SCROLL_AMOUNT_AT_EDGE / metrics.density);
+
+    }
+
+    public void startMobile() {
+            mTotalOffset = 0;
+
+            int position = pointToPosition(mDownX, mDownY);
+            int itemNum = position - getFirstVisiblePosition();
+
+            View selectedView = getChildAt(itemNum);
+            mMobileItemId = getAdapter().getItemId(position);
+
+        Log.d("DynamicList", "position " + position + "\n"
+                        + "itemNum " + itemNum + '\n'
+                        + "mMobileItemId " + mMobileItemId + "\n"
+                        + "mAboveItemId " + mAboveItemId + "\n"
+                        + "mBelowItemId " + mBelowItemId + "\n"
+                        + "mPos " + mPos + "\n"
+                        + "mDownX " + mDownX + "\n"
+                        + "mDownY " + mDownY
+        );
+
+            mHoverCell = getAndAddHoverView(selectedView);
+            selectedView.setVisibility(INVISIBLE);
+
+            mCellIsMobile = true;
+
+            updateNeighborViewsForID(position);
+
+            mPos = position;
+
+
     }
 
     /**
@@ -107,29 +139,7 @@ public class DynamicListView extends ListView {
             new AdapterView.OnItemLongClickListener() {
                 public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
 
-                    mTotalOffset = 0;
-
-                    int position = pointToPosition(mDownX, mDownY);
-                    int itemNum = position - getFirstVisiblePosition();
-
-                    View selectedView = getChildAt(itemNum);
-                    mMobileItemId = getAdapter().getItemId(position);
-                    mHoverCell = getAndAddHoverView(selectedView);
-                    selectedView.setVisibility(INVISIBLE);
-
-                    mCellIsMobile = true;
-
-                    updateNeighborViewsForID(pos);
-
-                    mPos = pos;
-
-                    Log.d("DynamicList", "position " + position + "\n"
-                                    + "itemNum " + itemNum + '\n'
-                                    + "mMobileItemId " + mMobileItemId + "\n"
-                                    + "mAboveItemId " + mAboveItemId + "\n"
-                                    + "mBelowItemId " + mBelowItemId + "\n"
-                                    + "mPos " + mPos
-                    );
+                    startMobile();
 
                     return true;
                 }
@@ -232,7 +242,8 @@ public class DynamicListView extends ListView {
         }
     }
 
-    @Override
+
+        @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {

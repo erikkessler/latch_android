@@ -34,6 +34,7 @@ public class TodayActivity extends Activity
     static final String        COLLAPSED_KEY = "collapsed_key";
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +45,7 @@ public class TodayActivity extends Activity
         mDataSource.open();
 
         // Setup the list
-        final ListView seqList = (ListView) findViewById(R.id.today_seq_list);
+        DynamicListView seqList = (DynamicListView) findViewById(R.id.today_seq_list);
 
         // Click listener
         seqList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -118,7 +119,8 @@ public class TodayActivity extends Activity
 
 
         // Adapter for sequences
-        mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager());
+        mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager(),
+                seqList);
 
        /* // Get collapsed
         if (savedInstanceState != null) {
