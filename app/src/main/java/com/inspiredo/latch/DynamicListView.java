@@ -8,7 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,11 +19,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -50,11 +45,9 @@ import java.util.List;
  */
 public class DynamicListView extends ListView {
 
-    private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 15;
+    private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 30;
     private final int MOVE_DURATION = 150;
-    private final int LINE_THICKNESS = 15;
-
-    public List<Sequence> mCheeseList;
+    private final int LINE_THICKNESS = 8;
 
     private int mLastEventY = -1;
 
@@ -81,6 +74,8 @@ public class DynamicListView extends ListView {
 
     private boolean mIsWaitingForScrollFinish = false;
     private int mScrollState = OnScrollListener.SCROLL_STATE_IDLE;
+
+    private int mPos;
 
     public DynamicListView(Context context) {
         super(context);
@@ -124,7 +119,17 @@ public class DynamicListView extends ListView {
 
                     mCellIsMobile = true;
 
-                    updateNeighborViewsForID(mMobileItemId);
+                    updateNeighborViewsForID(pos);
+
+                    mPos = pos;
+
+                    Log.d("DynamicList", "position " + position + "\n"
+                                    + "itemNum " + itemNum + '\n'
+                                    + "mMobileItemId " + mMobileItemId + "\n"
+                                    + "mAboveItemId " + mAboveItemId + "\n"
+                                    + "mBelowItemId " + mBelowItemId + "\n"
+                                    + "mPos " + mPos
+                    );
 
                     return true;
                 }
@@ -166,7 +171,7 @@ public class DynamicListView extends ListView {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(Color.BLACK);
+        paint.setColor(getResources().getColor(R.color.accent));
 
         can.drawBitmap(bitmap, 0, 0, null);
         can.drawRect(rect, paint);
@@ -190,8 +195,8 @@ public class DynamicListView extends ListView {
      * item is either at the top or bottom of the list, mAboveItemId or mBelowItemId
      * may be invalid.
      */
-    private void updateNeighborViewsForID(long itemID) {
-        int position = getPositionForID(itemID);
+    private void updateNeighborViewsForID(int position) {
+        //int position = getPositionForID(itemID);
         SeqListAdapter adapter = ((SeqListAdapter) getAdapter());
         mAboveItemId = adapter.getItemId(position - 1);
         mBelowItemId = adapter.getItemId(position + 1);
@@ -215,18 +220,6 @@ public class DynamicListView extends ListView {
     }
 
     /**
-     * Retrieves the position in the list corresponding to itemID
-     */
-    public int getPositionForID(long itemID) {
-        View v = getViewForID(itemID);
-        if (v == null) {
-            return -1;
-        } else {
-            return getPositionForView(v);
-        }
-    }
-
-    /**
      * dispatchDraw gets invoked when all the child views are about to be drawn.
      * By overriding this method, the hover cell (BitmapDrawable) can be drawn
      * over the listview's items whenever the listview is redrawn.
@@ -244,9 +237,11 @@ public class DynamicListView extends ListView {
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                Log.d("DynamicList", "Action Down");
                 mDownX = (int) event.getX();
                 mDownY = (int) event.getY();
                 mActivePointerId = event.getPointerId(0);
+
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (mActivePointerId == INVALID_POINTER_ID) {
@@ -273,9 +268,11 @@ public class DynamicListView extends ListView {
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                Log.d("DynamicList", "Action Up");
                 touchEventsEnded();
                 break;
             case MotionEvent.ACTION_CANCEL:
+                Log.d("DynamicList", "Action Cancel");
                 touchEventsCancelled();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
@@ -283,6 +280,7 @@ public class DynamicListView extends ListView {
                  * the movement of the hover cell has ended, then the dragging event
                  * ends and the hover cell is animated to its corresponding position
                  * in the listview. */
+                Log.d("DynamicList", "Action Pointer UP");
                 pointerIndex = (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >>
                         MotionEvent.ACTION_POINTER_INDEX_SHIFT;
                 final int pointerId = event.getPointerId(pointerIndex);
@@ -322,25 +320,34 @@ public class DynamicListView extends ListView {
 
             final long switchItemID = isBelow ? mBelowItemId : mAboveItemId;
             View switchView = isBelow ? belowView : aboveView;
-            final int originalItem = getPositionForView(mobileView);
 
-            if (switchView == null) {
-                updateNeighborViewsForID(mMobileItemId);
-                return;
+            /*swapElements(mCheeseList, originalItem, getPositionForView(switchView));
+
+            ((SeqListAdapter) getAdapter()).notifyDataSetChanged();*/
+            if (isBelow) {
+                ((SeqListAdapter) getAdapter()).moveDown(mPos);
+                mPos++;
+                Log.d("Movement", "Down");
+            } else {
+                ((SeqListAdapter) getAdapter()).moveUp(mPos);
+                mPos--;
+                Log.d("Movement", "Up");
+
+
             }
-
-            swapElements(mCheeseList, originalItem, getPositionForView(switchView));
-
-            ((SeqListAdapter) getAdapter()).notifyDataSetChanged();
 
             mDownY = mLastEventY;
 
             final int switchViewStartTop = switchView.getTop();
 
-            mobileView.setVisibility(View.VISIBLE);
+            if (mobileView == null) {
+                Log.d("Null", "The boy is null");
+            } else {
+                mobileView.setVisibility(View.VISIBLE);
+            }
             switchView.setVisibility(View.INVISIBLE);
 
-            updateNeighborViewsForID(mMobileItemId);
+            updateNeighborViewsForID(mPos);
 
             final ViewTreeObserver observer = getViewTreeObserver();
             observer.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
@@ -365,12 +372,6 @@ public class DynamicListView extends ListView {
                 }
             });
         }
-    }
-
-    private void swapElements(List arrayList, int indexOne, int indexTwo) {
-        Object temp = arrayList.get(indexOne);
-        arrayList.set(indexOne, arrayList.get(indexTwo));
-        arrayList.set(indexTwo, temp);
     }
 
 
@@ -497,10 +498,6 @@ public class DynamicListView extends ListView {
         return false;
     }
 
-    public void setCheeseList(List<Sequence> cheeseList) {
-        mCheeseList = cheeseList;
-    }
-
     /**
      * This scroll listener is added to the listview in order to handle cell swapping
      * when the cell is either at the top or bottom edge of the listview. If the hover
@@ -565,7 +562,7 @@ public class DynamicListView extends ListView {
         public void checkAndHandleFirstVisibleCellChange() {
             if (mCurrentFirstVisibleItem != mPreviousFirstVisibleItem) {
                 if (mCellIsMobile && mMobileItemId != INVALID_ID) {
-                    updateNeighborViewsForID(mMobileItemId);
+                    updateNeighborViewsForID(mPos);
                     handleCellSwitch();
                 }
             }
@@ -580,7 +577,7 @@ public class DynamicListView extends ListView {
             int previousLastVisibleItem = mPreviousFirstVisibleItem + mPreviousVisibleItemCount;
             if (currentLastVisibleItem != previousLastVisibleItem) {
                 if (mCellIsMobile && mMobileItemId != INVALID_ID) {
-                    updateNeighborViewsForID(mMobileItemId);
+                    updateNeighborViewsForID(mPos);
                     handleCellSwitch();
                 }
             }

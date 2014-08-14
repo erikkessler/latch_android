@@ -1,9 +1,7 @@
 package com.inspiredo.latch;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,10 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Activity that gets launched at the start. Displays the day's sequences, allows user
@@ -76,7 +71,7 @@ public class TodayActivity extends Activity
 
         // Long click listener - dialog to edit or delete
         final Context self = this;
-        seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
@@ -119,7 +114,7 @@ public class TodayActivity extends Activity
 
                 return true;
             }
-        });
+        });*/
 
 
         // Adapter for sequences

@@ -158,17 +158,13 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             upIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (position != 0) {
-                        moveSequence(position, -1);
-                    }
+                    moveUp(position);
                 }
             });
             downIcon.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (position < getCount() - 1) {
-                        moveSequence(position, 1);
-                    }
+                    moveDown(position);
                 }
             });
 
@@ -188,6 +184,18 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
 
         return convertView;
+    }
+
+    public void moveUp(int pos) {
+        if (pos != 0) {
+            moveSequence(pos, -1);
+        }
+    }
+
+    public void moveDown(int pos) {
+        if (pos < getCount() - 1) {
+            moveSequence(pos, 1);
+        }
     }
 
     // Method to move a Sequence
