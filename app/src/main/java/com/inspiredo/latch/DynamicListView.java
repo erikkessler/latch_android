@@ -8,6 +8,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
@@ -176,15 +177,7 @@ public class DynamicListView extends ListView {
         Bitmap bitmap = getBitmapFromView(v);
         Canvas can = new Canvas(bitmap);
 
-        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(getResources().getColor(R.color.accent));
-
         can.drawBitmap(bitmap, 0, 0, null);
-        can.drawRect(rect, paint);
 
         return bitmap;
     }
@@ -194,6 +187,7 @@ public class DynamicListView extends ListView {
      */
     private Bitmap getBitmapFromView(View v) {
         Bitmap bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
+        bitmap.eraseColor(getResources().getColor(R.color.primary_lightest)); // Set BG color
         Canvas canvas = new Canvas(bitmap);
         v.draw(canvas);
         return bitmap;

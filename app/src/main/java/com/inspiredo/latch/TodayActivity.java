@@ -30,7 +30,7 @@ public class TodayActivity extends Activity
     private MySQLDataSource mDataSource;
 
     // Key to bundle the collapsed items
-    static final String        COLLAPSED_KEY = "collapsed_key";
+    static final String    COLLAPSED_KEY = "collapsed_key";
 
 
 
@@ -58,64 +58,14 @@ public class TodayActivity extends Activity
                     // Expand
                     steps.setVisibility(View.GONE);
                     reward.setVisibility(View.GONE);
-                    //mSequenceAdapter.addCollapsed(position);
                 } else {
                     // Collapse
                     steps.setVisibility(View.VISIBLE);
                     reward.setVisibility(View.VISIBLE);
-                    //mSequenceAdapter.removeCollapsed(position);
                 }
 
             }
         });
-
-        // Long click listener - dialog to edit or delete
-        final Context self = this;
-        /*seqList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
-                final Sequence s = (Sequence) seqList.getItemAtPosition(position);
-
-                // Build the confirmation dialog
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE:
-                                // Cancel Button
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                // Edit button
-                                Intent createSeqIntent = new Intent(self, CreateSeqActivity.class);
-                                createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
-                                createSeqIntent.putExtra(CreateSeqActivity.EDIT_POS, position);
-                                startActivityForResult(createSeqIntent, EDIT_SEQ_REQUEST);
-                                break;
-                            case DialogInterface.BUTTON_NEUTRAL:
-                                // Delete Button
-                                //mSequenceAdapter.deleteCollapsed(position);
-                                mDataSource.deleteSequence(s);
-                                mSequenceAdapter.remove(s);
-                                mSequenceAdapter.notifyDataSetChanged();
-                                break;
-                        }
-                    }
-                };
-
-                // Show the confirmation dialog
-                AlertDialog.Builder builder = new AlertDialog.Builder(self);
-                builder.setMessage("Edit or Delete this Sequence?")
-                        .setPositiveButton("Cancel", dialogClickListener)
-                        .setNeutralButton("Delete", dialogClickListener)
-                        .setNegativeButton("Edit", dialogClickListener).show();
-
-
-                return true;
-            }
-        });*/
-
 
         // Adapter for sequences
         mSequenceAdapter = new SeqListAdapter(this, R.layout.row_seq, getFragmentManager(),
