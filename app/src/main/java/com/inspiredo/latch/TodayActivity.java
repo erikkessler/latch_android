@@ -186,7 +186,7 @@ public class TodayActivity extends Activity
         Sequence seq = mDataSource.getSequence(t.getSequenceId());
 
         // Create the alarm/notification
-       Trigger.createTrigger(t, this, seq.getTitle());
+       Trigger.createTrigger(t, this, seq);
 
         // Update the UI
         mSequenceAdapter.clear();

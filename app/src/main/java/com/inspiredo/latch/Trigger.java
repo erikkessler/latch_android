@@ -125,9 +125,9 @@ public class Trigger {
      * Static Trigger method for setting the alarm/notification
      * @param t Trigger to set alarm for
      * @param c Context
-     * @param title Title of the sequence to display in the notification
+     * @param sequence Sequence to display in the notification
      */
-    public static void createTrigger(Trigger t, Context c, String title) {
+    public static void createTrigger(Trigger t, Context c, Sequence sequence) {
         // Time that the notification/alarm should trigger
         Calendar cal = GregorianCalendar.getInstance();
         cal.setTime(t.getTime());
@@ -145,7 +145,8 @@ public class Trigger {
             // Use AlarmManager to create notification at correct time
             AlarmManager mgr = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
             Intent i = new Intent(c, TriggerIntentService.class);
-            i.putExtra(TriggerIntentService.SEQUENCE_TITLE, title);
+            i.putExtra(TriggerIntentService.SEQUENCE_ID, sequence.getId());
+            i.setAction(TriggerIntentService.ACTION_CREATE);
             PendingIntent pi = PendingIntent.getService(c, (int) t.getId(), i, 0);
 
             // Check version to use correct method

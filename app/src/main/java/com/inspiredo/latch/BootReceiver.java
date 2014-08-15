@@ -32,7 +32,7 @@ public class BootReceiver extends BroadcastReceiver {
             if (trigger.getType() == Trigger.NOTIFICATION &&
                     trigger.getTime().compareTo(new Date()) > 0) {
                 Sequence s = dataSource.getSequence(trigger.getSequenceId());
-                Trigger.createTrigger(trigger, c, s.getTitle());
+                Trigger.createTrigger(trigger, c, s);
             }
         }
 
