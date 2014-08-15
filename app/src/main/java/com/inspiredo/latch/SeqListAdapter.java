@@ -14,8 +14,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.Vector;
 
 /**
  * Binds an Array of sequences to a view
@@ -71,21 +73,21 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
             final ListView steps = (ListView) convertView.findViewById(R.id.seq_step_list);
             steps.setFocusable(false); // Needed to allow parent list to be clickable
             steps.setFocusableInTouchMode(false); // Needed to allow parent list to be clickable
-            if (steps != null) {
-                // Create adapter and add all steps
-                StepListAdapter stepAdapter =
-                        new StepListAdapter(getContext(), R.layout.row_seq_step);
-                stepAdapter.addAll(s.getSteps());
 
-                // Adjust height of the ListView to show all steps
-                final float scale = getContext().getResources().getDisplayMetrics().density;
-                steps.getLayoutParams().height = (int) (
-                        (56 * scale + 0.5f) * stepAdapter.getCount());
+            // Create adapter and add all steps
+            final StepListAdapter stepAdapter =
+                    new StepListAdapter(getContext(), R.layout.row_seq_step);
+            stepAdapter.addAll(s.getSteps());
 
-                // Set the adapter and the ClickListener
-                steps.setAdapter(stepAdapter);
-                steps.setOnItemClickListener(stepAdapter);
-            }
+            // Adjust height of the ListView to show all steps
+            final float scale = getContext().getResources().getDisplayMetrics().density;
+            steps.getLayoutParams().height = (int) (
+                    (56 * scale + 0.5f) * stepAdapter.getCount());
+
+            // Set the adapter and the ClickListener
+            steps.setAdapter(stepAdapter);
+            steps.setOnItemClickListener(stepAdapter);
+
 
             // Set the reward
             final TextView reward = (TextView) convertView.findViewById(R.id.seq_reward);
@@ -191,12 +193,12 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE:
-                                    // Cancel Button
-                                    break;
+                            switch (which) {
 
                                 case DialogInterface.BUTTON_NEGATIVE:
+                                    // Cancel button
+                                    break;
+                                case 0:
                                     // Edit button
                                     Intent createSeqIntent = new Intent(mContext, CreateSeqActivity.class);
                                     createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
@@ -204,7 +206,8 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                                     mContext.startActivityForResult(createSeqIntent,
                                             TodayActivity.EDIT_SEQ_REQUEST);
                                     break;
-                                case DialogInterface.BUTTON_NEUTRAL:
+
+                                case 1:
                                     // Delete Button
                                     MySQLDataSource dataSource = new MySQLDataSource(mContext);
                                     dataSource.open();
@@ -213,16 +216,48 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                                     notifyDataSetChanged();
                                     dataSource.close();
                                     break;
+                                case 2:
+                                    // Check all Steps
+                                    dataSource = new MySQLDataSource(mContext);
+                                    dataSource.open();
+                                    List<Step> editedSteps = new Vector<Step>();
+                                    for (Step step : s.getSteps()) {
+                                        step.setComplete(true);
+                                        dataSource.completeStep(step, true);
+                                        editedSteps.add(step);
+                                    }
+                                    stepAdapter.clear();
+                                    stepAdapter.addAll(editedSteps);
+                                    stepAdapter.notifyDataSetChanged();
+                                    dataSource.close();
+                                    break;
+                                case 3:
+                                    // Uncheck all Steps
+                                    dataSource = new MySQLDataSource(mContext);
+                                    dataSource.open();
+                                    editedSteps = new Vector<Step>();
+                                    for (Step step : s.getSteps()) {
+                                        step.setComplete(false);
+                                        dataSource.completeStep(step, false);
+                                        editedSteps.add(step);
+                                    }
+                                    stepAdapter.clear();
+                                    stepAdapter.addAll(editedSteps);
+                                    stepAdapter.notifyDataSetChanged();
+                                    dataSource.close();
+                                    break;
                             }
                         }
                     };
 
                     // Show the confirmation dialog
                     AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setMessage("Edit or Delete this Sequence?")
-                            .setPositiveButton("Cancel", dialogClickListener)
-                            .setNeutralButton("Delete", dialogClickListener)
-                            .setNegativeButton("Edit", dialogClickListener).show();
+                    builder.setTitle(mContext.getString(R.string.more_actions))
+                            .setNegativeButton("Cancel", dialogClickListener)
+                            .setItems(new CharSequence[]
+                                    {"Edit", "Delete", "Check All", "Uncheck All"},
+                                    dialogClickListener).show();
+
                 }
             });
 
