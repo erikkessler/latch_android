@@ -198,7 +198,7 @@ public class  CreateSeqActivity extends Activity {
                 mRewardSwitcher.showNext();
             }
 
-            // Get order
+            // Get order to send it back
             mOrder = extras.getInt(ORDER_KEY);
 
         }
@@ -283,6 +283,16 @@ public class  CreateSeqActivity extends Activity {
             edit.setText(step.getTitle());
             newSwitcher.setString(step.getTitle());
         }
+
+        // Long click to add step above
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int index = mStepContainer.indexOfChild(newSwitcher);
+                mStepContainer.addView(createStepView(null), index);
+                return true;
+            }
+        });
 
         return newSwitcher;
     }

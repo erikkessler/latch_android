@@ -8,8 +8,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
@@ -48,7 +46,6 @@ public class DynamicListView extends ListView {
 
     private final int SMOOTH_SCROLL_AMOUNT_AT_EDGE = 30;
     private final int MOVE_DURATION = 150;
-    private final int LINE_THICKNESS = 8;
 
     private int mLastEventY = -1;
 
@@ -237,7 +234,7 @@ public class DynamicListView extends ListView {
     }
 
 
-        @Override
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction() & MotionEvent.ACTION_MASK) {
