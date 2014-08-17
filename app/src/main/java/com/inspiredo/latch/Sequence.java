@@ -147,7 +147,7 @@ public class Sequence {
 
     /**
      * Set the order position of the Sequence
-     * @param order
+     * @param order Order to put it at
      */
     public void setOrder(int order) {
         mOrder = order;
@@ -155,7 +155,7 @@ public class Sequence {
 
     /**
      * Get the order of the Sequence
-     * @return
+     * @return The Order
      */
     public int getOrder() {
         return mOrder;
@@ -181,13 +181,15 @@ public class Sequence {
     }
 
     // Toggle the collapsed state
-    public void toggleCollapsed() {
+    public Sequence toggleCollapsed() {
         mCollapsed = !mCollapsed;
+        return this;
     }
 
     // Set the collapsed state
-    public void setCollapsed(boolean collapsed) {
+    public Sequence setCollapsed(boolean collapsed) {
         mCollapsed = collapsed;
+        return this;
     }
 
     @Override

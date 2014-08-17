@@ -52,6 +52,7 @@ public class MySQLDataSource {
         values.put(MySQLiteHelper.COLUMN_TITLE, seq.getTitle());
         values.put(MySQLiteHelper.COLUMN_REWARD, seq.getReward());
         values.put(MySQLiteHelper.COLUMN_POS, seq.getOrder());
+        values.put(MySQLiteHelper.COLUMN_COLLAPSE, seq.getCollapsed());
 
         // Insert into the database
         long insertId = database.insert(MySQLiteHelper.TABLE_SEQUENCES, null,
@@ -194,6 +195,14 @@ public class MySQLDataSource {
         vals.put(MySQLiteHelper.COLUMN_POS, newPos);
         database.update(MySQLiteHelper.TABLE_SEQUENCES, vals,
                 MySQLiteHelper.COLUMN_ID + " = " + id, null);
+    }
+
+    // Change the collapse state of the Sequence
+    public void setCollapsed(Sequence s, boolean collapsed) {
+        ContentValues vals = new ContentValues();
+        vals.put(MySQLiteHelper.COLUMN_COLLAPSE, collapsed);
+        database.update(MySQLiteHelper.TABLE_SEQUENCES, vals,
+                MySQLiteHelper.COLUMN_ID + " = " + s.getId(), null);
     }
 
     /**
@@ -414,6 +423,7 @@ public class MySQLDataSource {
         sequence.setId(cursor.getLong(0));
         sequence.setReward(cursor.getString(2));
         sequence.setOrder(cursor.getInt(3));
+        sequence.setCollapsed(cursor.getInt(4) == 1);
         return sequence;
     }
 

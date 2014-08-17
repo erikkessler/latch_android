@@ -51,9 +51,10 @@ public class TodayActivity extends Activity
                 View steps = view.findViewById(R.id.seq_step_list);
                 View reward = view.findViewById(R.id.seq_reward);
 
-                mSequenceAdapter.getItem(position).toggleCollapsed();
+                boolean collapse = false;
                 if (steps.getVisibility() != View.GONE) {
                     // Collapse
+                    collapse = true;
                     steps.setVisibility(View.GONE);
                     reward.setVisibility(View.GONE);
                 } else {
@@ -61,6 +62,11 @@ public class TodayActivity extends Activity
                     steps.setVisibility(View.VISIBLE);
                     reward.setVisibility(View.VISIBLE);
                 }
+
+                mDataSource.setCollapsed(
+                        mSequenceAdapter.getItem(position).toggleCollapsed(),
+                        collapse
+                );
 
             }
         });
@@ -142,7 +148,10 @@ public class TodayActivity extends Activity
             }
 
 
-            mSequenceAdapter.getItem(i).setCollapsed(collapse);
+            mDataSource.setCollapsed(
+                    mSequenceAdapter.getItem(i).setCollapsed(collapse),
+                    collapse
+            );
 
         }
     }

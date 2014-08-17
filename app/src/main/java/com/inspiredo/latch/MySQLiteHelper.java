@@ -14,7 +14,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Database info
     private static final String DATABASE_NAME = "latch.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     // Table names
     public static final String TABLE_SEQUENCES = "sequences";
@@ -29,6 +29,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     // Sequence column names
     public static final String COLUMN_REWARD = "reward";
     public static final String COLUMN_POS = "pos";
+    public static final String COLUMN_COLLAPSE = "collapsed";
 
     // Step column names
     public static final String COLUMN_COMPLETE = "complete";
@@ -43,6 +44,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + " integer primary key autoincrement, " + COLUMN_TITLE
             + " text not null, " + COLUMN_REWARD
             + " text, " + COLUMN_POS
+            + " integer, " + COLUMN_COLLAPSE
             + " integer);";
 
     private static final String CREATE_TABLE_STEPS = "create table "
@@ -104,7 +106,25 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 }
 
                 cursor.close();
-                break;
+            case 2:
+                Log.d("Database", "Upgrading from version 2");
+                db.execSQL("ALTER TABLE " + TABLE_SEQUENCES + " ADD COLUMN "
+                        + COLUMN_COLLAPSE + " INTEGER");
+                cursor = db.query(MySQLiteHelper.TABLE_SEQUENCES,
+                        null, null, null, null, null, null);
+
+                cursor.moveToFirst();
+                while (!cursor.isAfterLast()) {
+                    ContentValues vals = new ContentValues();
+                    vals.put(COLUMN_COLLAPSE, false);
+                    db.update(TABLE_SEQUENCES, vals, COLUMN_ID + " = " + cursor.getLong(0), null);
+                    Log.d("Database", "Entry " + cursor.getLong(0)
+                            + " given collapse " + false);
+                    cursor.moveToNext();
+
+                }
+
+                cursor.close();
         }
 
     }
