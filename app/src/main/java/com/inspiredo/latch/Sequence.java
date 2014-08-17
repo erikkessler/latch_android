@@ -185,6 +185,11 @@ public class Sequence {
         mCollapsed = !mCollapsed;
     }
 
+    // Set the collapsed state
+    public void setCollapsed(boolean collapsed) {
+        mCollapsed = collapsed;
+    }
+
     @Override
     public String toString() {
         return mTitle;

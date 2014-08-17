@@ -1,6 +1,8 @@
 package com.inspiredo.latch;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -54,11 +56,11 @@ public class TodayActivity extends Activity
 
                 mSequenceAdapter.getItem(position).toggleCollapsed();
                 if (steps.getVisibility() != View.GONE) {
-                    // Expand
+                    // Collapse
                     steps.setVisibility(View.GONE);
                     reward.setVisibility(View.GONE);
                 } else {
-                    // Collapse
+                    // Expand
                     steps.setVisibility(View.VISIBLE);
                     reward.setVisibility(View.VISIBLE);
                 }
@@ -110,6 +112,13 @@ public class TodayActivity extends Activity
             case R.id.action_settings:
                 // TODO: Settings Activity
                 return true;
+            case R.id.action_collapse:
+                collapseAll(true);
+                return true;
+            case R.id.action_expand:
+                collapseAll(false);
+                return true;
+
             case R.id.action_add:
                 // Launch the sequence creation Activity
                 Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
@@ -122,6 +131,36 @@ public class TodayActivity extends Activity
                 Toast.makeText(this, "Unimplemented action", Toast.LENGTH_SHORT)
                         .show();
                 return true;
+        }
+    }
+
+    /**
+     * Collapse or expand all the Sequences in the list view
+     * @param collapse Collapse - true, expand - false
+     */
+    private void collapseAll(boolean collapse) {
+        // Get the correct visibility value
+        int visibility = collapse ? View.GONE : View.VISIBLE;
+
+        DynamicListView seqList = (DynamicListView) findViewById(R.id.today_seq_list);
+
+        // Expand/collapse all
+        for (int i = 0; i < seqList.getCount(); i++) {
+            View view = seqList.getChildAt(i);
+
+            // Collapse visible ones
+            if (view != null) {
+                View steps = view.findViewById(R.id.seq_step_list);
+                View reward = view.findViewById(R.id.seq_reward);
+                steps.setVisibility(visibility);
+                reward.setVisibility(visibility);
+            }
+
+
+            mSequenceAdapter.getItem(i).setCollapsed(collapse);
+
+
+
         }
     }
 
@@ -166,6 +205,11 @@ public class TodayActivity extends Activity
     @Override
     protected void onResume() {
         mDataSource.open();
+
+        // Clear any notifications upon entering app
+        NotificationManager mgr = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        mgr.cancelAll();
         super.onResume();
     }
 

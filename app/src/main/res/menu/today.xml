@@ -7,6 +7,17 @@
         android:showAsAction="always"
         android:icon="@drawable/ic_action_new"
         />
+
+    <item android:id="@+id/action_collapse"
+        android:title="@string/action_collapse"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+    <item android:id="@+id/action_expand"
+        android:title="@string/action_expand"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
