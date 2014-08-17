@@ -1,2 +1,2 @@
-Latch
+Latch for Android
 =============
