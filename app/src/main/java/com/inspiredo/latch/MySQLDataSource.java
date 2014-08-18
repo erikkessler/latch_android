@@ -1,10 +1,14 @@
 package com.inspiredo.latch;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
+import android.provider.CalendarContract;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -127,8 +131,6 @@ public class MySQLDataSource {
         database.delete(MySQLiteHelper.TABLE_STEPS,
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
         Trigger.delete(getSeqTrigger(id), mContext);
-        database.delete(MySQLiteHelper.TABLE_TRIGGERS,
-                MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
 
         // Decrement the order value of following Sequences
         changeRangeOrder(sequence.getOrder() + 1, -1, -1);
@@ -201,6 +203,19 @@ public class MySQLDataSource {
     public void setCollapsed(Sequence s, boolean collapsed) {
         ContentValues vals = new ContentValues();
         vals.put(MySQLiteHelper.COLUMN_COLLAPSE, collapsed);
+        database.update(MySQLiteHelper.TABLE_SEQUENCES, vals,
+                MySQLiteHelper.COLUMN_ID + " = " + s.getId(), null);
+    }
+
+    /**
+     * Set the event id connecting the Sequence to Google Calendar
+     * @param s The sequence to save to
+     * @param eventId The Google Calendar event Id
+     */
+    public void setEventId(Sequence s, long eventId) {
+        ContentValues vals = new ContentValues();
+        vals.put(MySQLiteHelper.COLUMN_EVENT_ID, eventId);
+
         database.update(MySQLiteHelper.TABLE_SEQUENCES, vals,
                 MySQLiteHelper.COLUMN_ID + " = " + s.getId(), null);
     }
@@ -338,10 +353,11 @@ public class MySQLDataSource {
      */
     public Trigger createTrigger(Trigger t) {
         ContentValues values = new ContentValues();
-        Log.d("Tigger", t.getTime().getTime() + "");
+        Log.d("Trigger", t.getTime().getTime() + "\n" + t.getEventId() );
         values.put(MySQLiteHelper.COLUMN_TIME, t.getTime().getTime());
         values.put(MySQLiteHelper.COLUMN_TYPE, t.getType());
         values.put(MySQLiteHelper.COLUMN_SEQ, t.getSequenceId());
+        values.put(MySQLiteHelper.COLUMN_EVENT_ID, t.getEventId());
 
         long insertId = database.insert(MySQLiteHelper.TABLE_TRIGGERS, null,
                 values);
@@ -404,9 +420,18 @@ public class MySQLDataSource {
      */
     public void deleteTrigger(Trigger trigger) {
         long id = trigger.getId();
-        System.out.println("Comment deleted with id: " + id);
+
+        // Delete the Trigger
         database.delete(MySQLiteHelper.TABLE_TRIGGERS, MySQLiteHelper.COLUMN_ID
                 + " = " + id, null);
+
+        // Delete from Calendar
+        ContentResolver cr = mContext.getContentResolver();
+        Uri deleteUri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI,
+                trigger.getEventId());
+        cr.delete(deleteUri, null, null);
+        Log.d("Calendar", trigger.getEventId() + " removed");
+
     }
 
     //
@@ -455,6 +480,7 @@ public class MySQLDataSource {
         );
         trigger.setId(cursor.getLong(0));
         trigger.setSequenceId(cursor.getLong(3));
+        trigger.setEventId(cursor.getLong(4));
         return trigger;
     }
 

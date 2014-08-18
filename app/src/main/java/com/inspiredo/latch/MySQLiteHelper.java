@@ -14,7 +14,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
 
     // Database info
     private static final String DATABASE_NAME = "latch.db";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 1;
 
     // Table names
     public static final String TABLE_SEQUENCES = "sequences";
@@ -31,12 +31,14 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     public static final String COLUMN_POS = "pos";
     public static final String COLUMN_COLLAPSE = "collapsed";
 
+
     // Step column names
     public static final String COLUMN_COMPLETE = "complete";
 
     // Trigger column names
     public static final String COLUMN_TIME = "time";
     public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_EVENT_ID = "event_id";
 
     // Table creation strings
     private static final String CREATE_TABLE_SEQUENCES = "create table "
@@ -57,7 +59,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
             + TABLE_TRIGGERS + "(" + COLUMN_ID
             + " integer primary key autoincrement, " + COLUMN_TIME
             + " integer, " + COLUMN_TYPE
-            + " integer, " + COLUMN_SEQ + " integer);";
+            + " integer, " + COLUMN_SEQ
+            + " integer, " + COLUMN_EVENT_ID + " integer);";
 
     public MySQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -84,7 +87,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);*/
 
 
-        switch (oldVersion) {
+        /*switch (oldVersion) {
             case 1:
                 Log.d("Database", "Upgrading from version 1");
                 db.execSQL("ALTER TABLE " + TABLE_SEQUENCES + " ADD COLUMN "
@@ -106,27 +109,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
                 }
 
                 cursor.close();
-            case 2:
-                Log.d("Database", "Upgrading from version 2");
-                db.execSQL("ALTER TABLE " + TABLE_SEQUENCES + " ADD COLUMN "
-                        + COLUMN_COLLAPSE + " INTEGER");
-                cursor = db.query(MySQLiteHelper.TABLE_SEQUENCES,
-                        null, null, null, null, null, null);
 
-                cursor.moveToFirst();
-                while (!cursor.isAfterLast()) {
-                    ContentValues vals = new ContentValues();
-                    vals.put(COLUMN_COLLAPSE, false);
-                    db.update(TABLE_SEQUENCES, vals, COLUMN_ID + " = " + cursor.getLong(0), null);
-                    Log.d("Database", "Entry " + cursor.getLong(0)
-                            + " given collapse " + false);
-                    cursor.moveToNext();
-
-                }
-
-                cursor.close();
-        }
+        }*/
 
     }
-
 }

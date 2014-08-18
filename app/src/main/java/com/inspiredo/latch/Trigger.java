@@ -35,6 +35,9 @@ public class Trigger {
     // ID of the Sequence it belongs to
     private long mSequenceId;
 
+    // Id of the Calendar event
+    private long mEventId;
+
     /**
      * Construct a new trigger
      * @param time Time to trigger notification
@@ -156,6 +159,22 @@ public class Trigger {
                 mgr.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
             }
         }
+    }
+
+    /**
+     * Set the event Id
+     * @param eventId The id from the URI
+     */
+    public void setEventId(long eventId) {
+        mEventId = eventId;
+    }
+
+    /**
+     * Get the event Id
+     * @return The event Id
+     */
+    public long getEventId() {
+        return mEventId;
     }
 
     /**
