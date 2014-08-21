@@ -20,7 +20,9 @@
 
         <com.inspiredo.latch.DynamicListView
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
+            android:footerDividersEnabled="false"
+            android:overScrollFooter="@android:color/transparent"
             android:id="@+id/today_seq_list"
             android:dividerHeight="4px"
             android:divider="@drawable/seq_list_divider" />
