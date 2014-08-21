@@ -111,12 +111,7 @@ public class TodayActivity extends Activity
                 return true;
 
             case R.id.action_add:
-                // Launch the sequence creation Activity
-                Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
-                createSeqIntent.putExtra(
-                        CreateSeqActivity.ORDER_KEY, mSequenceAdapter.getCount()
-                );
-                startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
+                createSequence();
                 return true;
             default:
                 Toast.makeText(this, "Unimplemented action", Toast.LENGTH_SHORT)
@@ -154,6 +149,19 @@ public class TodayActivity extends Activity
             );
 
         }
+    }
+
+    // Launch the sequence creation Activity
+    private void createSequence() {
+        Intent createSeqIntent = new Intent(this, CreateSeqActivity.class);
+        createSeqIntent.putExtra(
+                CreateSeqActivity.ORDER_KEY, mSequenceAdapter.getCount()
+        );
+        startActivityForResult(createSeqIntent, CREATE_SEQ_REQUEST);
+    }
+
+    public void fabClicked(View v) {
+        createSequence();
     }
 
     @Override
