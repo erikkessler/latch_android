@@ -15,8 +15,12 @@ public class BootReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("BOOT", "HEy Boot boy");
-        scheduleAlarms(context);
+        String action = intent.getAction();
+
+        if (action.equals(Intent.ACTION_BOOT_COMPLETED) ||
+                action.equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
+            scheduleAlarms(context);
+        }
     }
 
     /**
