@@ -44,10 +44,18 @@ public class MyLaunchActivity extends Activity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        Fragment f = PlaceholderFragment.newInstance(position + 1);
+        switch (position) {
+            case 0:
+                f = TodayFragment.newInstance();
+                f.setHasOptionsMenu(true);
+                break;
+
+        }
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, f)
                 .commit();
     }
 

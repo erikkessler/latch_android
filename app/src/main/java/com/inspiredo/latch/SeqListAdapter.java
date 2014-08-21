@@ -26,7 +26,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     private FragmentManager mManager;
 
     // Context
-    private TodayActivity mContext;
+    private MyLaunchActivity mContext;
 
     // Dynamic ListView
     private DynamicListView mListView;
@@ -36,7 +36,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     /**
      * Constructor just calls the super constructor
      */
-    public SeqListAdapter(TodayActivity context, int resource, FragmentManager manager,
+    public SeqListAdapter(MyLaunchActivity context, int resource, FragmentManager manager,
                           DynamicListView listView) {
         super(context, resource);
         mManager = manager;
@@ -198,7 +198,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
                                     createSeqIntent.putExtra(CreateSeqActivity.EDIT_ID_KEY, s.getId());
                                     createSeqIntent.putExtra(CreateSeqActivity.EDIT_POS, position);
                                     mContext.startActivityForResult(createSeqIntent,
-                                            TodayActivity.EDIT_SEQ_REQUEST);
+                                            TodayFragment.EDIT_SEQ_REQUEST);
                                     break;
 
                                 case 1:

@@ -60,7 +60,7 @@ public class TriggerIntentService extends IntentService {
 
     // Creates a notification
     private void actionCreate(Intent intent) {
-        Intent resultIntent = new Intent(this, TodayActivity.class);
+        Intent resultIntent = new Intent(this, TodayFragment.class);
         PendingIntent resultPendingIntent =
                 PendingIntent.getActivity(
                         this,

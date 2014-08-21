@@ -2,24 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".TodayActivity" >
 
-    <item android:id="@+id/action_add"
-        android:title="@string/action_add"
-        android:showAsAction="always"
-        android:icon="@drawable/ic_action_new"
-        />
-
     <item android:id="@+id/action_collapse"
         android:title="@string/action_collapse"
-        android:orderInCategory="100"
+        android:orderInCategory="2"
         android:showAsAction="never" />
 
     <item android:id="@+id/action_expand"
         android:title="@string/action_expand"
-        android:orderInCategory="100"
+        android:orderInCategory="1"
         android:showAsAction="never" />
 
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
 </menu>
