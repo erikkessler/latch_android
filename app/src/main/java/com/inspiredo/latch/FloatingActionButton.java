@@ -69,12 +69,6 @@ public class FloatingActionButton extends View {
         mScreenHeight = size.y;
     }
 
-    public void setColor(int color) {
-        mColor = color;
-        mButtonPaint.setColor(mColor);
-        invalidate();
-    }
-
     public void setDrawable(Drawable drawable) {
         mBitmap = ((BitmapDrawable) drawable).getBitmap();
         invalidate();
