@@ -56,7 +56,7 @@ public class TodayFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View mRootView = inflater.inflate(R.layout.fragment_today, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_today, container, false);
 
 
         // Instantiate and open the data sources
