@@ -15,8 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.Vector;
 
 /**
@@ -30,10 +28,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
     // Context
     private TodayActivity mContext;
 
-    // Set of collapsed
-    private Set<Integer> mCollapsed;
-
-    // Dynamic Listview
+    // Dynamic ListView
     private DynamicListView mListView;
 
     final int INVALID_ID = -1;
@@ -46,7 +41,6 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
         super(context, resource);
         mManager = manager;
         mContext = context;
-        mCollapsed = new TreeSet<Integer>();
         mListView = listView;
     }
 
@@ -209,7 +203,7 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
                                 case 1:
                                     // Delete Button
-                                    MySQLDataSource dataSource = new MySQLDataSource(mContext);
+                                    DataSource dataSource = new MySQLDataSource(mContext);
                                     dataSource.open();
                                     dataSource.deleteSequence(s);
                                     remove(s);
@@ -292,12 +286,12 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
     // Method to move a Sequence
     private void moveSequence(int position, int delta) {
-        MySQLDataSource dataSource = new MySQLDataSource(mContext);
+        DataSource dataSource = new MySQLDataSource(mContext);
         dataSource.open();
 
         // Save change to the DB
         Sequence s = getItem(position);
-        dataSource.moveSequence(s, s.getOrder() + delta);
+        dataSource.changeSequenceOrder(s, s.getOrder() + delta);
 
         s.setOrder(s.getOrder() + delta);
 
@@ -308,38 +302,6 @@ public class SeqListAdapter extends ArrayAdapter<Sequence>{
 
 
         dataSource.close();
-    }
-
-    // Maintainable of collapsed items
-    public void addCollapsed(int pos) {
-        mCollapsed.add(pos);
-    }
-
-    public void removeCollapsed(int pos) {
-        mCollapsed.remove(pos);
-    }
-
-    public void deleteCollapsed(int pos) {
-        removeCollapsed(pos);
-
-        Set<Integer> newSet = new TreeSet<Integer>();
-
-        for (Integer i : mCollapsed) {
-            int adj = i;
-            if (i > pos) adj--;
-            newSet.add(adj);
-        }
-
-        mCollapsed = newSet;
-
-    }
-
-    public void setCollapsed(Set<Integer> collapsed) {
-        mCollapsed = collapsed;
-    }
-
-    public Set<Integer> getCollapsed() {
-        return mCollapsed;
     }
 
     @Override

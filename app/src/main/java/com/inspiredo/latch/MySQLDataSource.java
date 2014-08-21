@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Allows for persistence and retrieval of data using the local SQLite database.
  */
-public class MySQLDataSource {
+public class MySQLDataSource implements DataSource {
 
     // Database fields
     private SQLiteDatabase  database;
@@ -38,7 +38,7 @@ public class MySQLDataSource {
     }
 
     //
-    // * SEQUENCE CRUD ACTIONS *
+    // * SEQUENCE ACTIONS *
     //
 
     /**
@@ -46,7 +46,7 @@ public class MySQLDataSource {
      * @param seq Sequence to create for
      * @return The sequence
      */
-    public Sequence createSequence(Sequence seq) {
+    public Sequence saveSequence(Sequence seq) {
         // Put the content into a ContentValue
         ContentValues values = new ContentValues();
         values.put(MySQLiteHelper.COLUMN_TITLE, seq.getTitle());
@@ -73,7 +73,7 @@ public class MySQLDataSource {
      * @return List of the Sequences
      * @param order How to sort the data
      */
-    public List<Sequence> getAllSequences(String order) {
+    public List<Sequence> listAllSequences(String order) {
         List<Sequence> sequences = new ArrayList<Sequence>();
 
         // Query the database
@@ -83,8 +83,8 @@ public class MySQLDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Sequence sequence = cursorToSeq(cursor);
-            sequence.setSteps(getSteps(sequence.getId()));
-            sequence.setTrigger(getSeqTrigger(sequence.getId()));
+            sequence.setSteps(getSequenceSteps(sequence.getId()));
+            sequence.setTrigger(getSequenceTrigger(sequence.getId()));
             sequences.add(sequence);
             cursor.moveToNext();
         }
@@ -98,7 +98,7 @@ public class MySQLDataSource {
      * @param id Id to query
      * @return The sequence
      */
-    public Sequence getSequence(long id) {
+    public Sequence getSequenceById(long id) {
         // Query the database
         Cursor cursor = database.query(MySQLiteHelper.TABLE_SEQUENCES,
                 null, MySQLiteHelper.COLUMN_ID +"=?",
@@ -109,11 +109,57 @@ public class MySQLDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             sequence = cursorToSeq(cursor);
-            sequence.setSteps(getSteps(sequence.getId()));
-            sequence.setTrigger(getSeqTrigger(sequence.getId()));
+            sequence.setSteps(getSequenceSteps(sequence.getId()));
+            sequence.setTrigger(getSequenceTrigger(sequence.getId()));
             cursor.moveToNext();
         }
         return sequence;
+    }
+
+    /**
+     * Get Trigger belonging to a Sequence
+     * @param id Id of the Sequence
+     * @return The Trigger
+     */
+    public Trigger getSequenceTrigger(long id) {
+        Trigger t = new Trigger(null, Trigger.NONE);
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_TRIGGERS,
+                null, MySQLiteHelper.COLUMN_SEQ +"=?",
+                new String[] {id +""}, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            t = cursorToTrigger(cursor);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return t;
+    }
+
+
+    /**
+     * Get all the steps belonging to a Sequence
+     * @param id The Id of the sequence to get steps for
+     * @return List of the Sequence's steps
+     */
+    public List<Step> getSequenceSteps(long id) {
+        List<Step> steps = new ArrayList<Step>();
+
+        Cursor cursor = database.query(MySQLiteHelper.TABLE_STEPS,
+                null, MySQLiteHelper.COLUMN_SEQ +"=?",
+                new String[] {id +""}, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Step step = cursorToStep(cursor);
+            steps.add(step);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return steps;
     }
 
     /**
@@ -126,12 +172,32 @@ public class MySQLDataSource {
                 MySQLiteHelper.COLUMN_ID + " = " + id, null);
         database.delete(MySQLiteHelper.TABLE_STEPS,
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
-        Trigger.delete(getSeqTrigger(id), mContext);
+        Trigger.delete(getSequenceTrigger(id), mContext);
         database.delete(MySQLiteHelper.TABLE_TRIGGERS,
                 MySQLiteHelper.COLUMN_SEQ + " = " + id, null);
 
         // Decrement the order value of following Sequences
         changeRangeOrder(sequence.getOrder() + 1, -1, -1);
+    }
+
+    /**
+     * Move a Sequence to a specified position
+     * @param s The sequence to move
+     * @param end The ending position
+     */
+    public void changeSequenceOrder(Sequence s, int end) {
+        int start = s.getOrder();
+        long id = s.getId();
+
+        // Update the affected surrounding sequences
+        if (start > end) {
+            changeRangeOrder(end, start - 1, 1);
+        } else if (start < end) {
+            changeRangeOrder(start + 1, end, -1);
+        }
+
+        // Update the Sequence itself
+        changeIndividualOrder(id, end);
     }
 
     /**
@@ -165,28 +231,6 @@ public class MySQLDataSource {
                     MySQLiteHelper.COLUMN_ID + " = " + cursor.getLong(0), null);
             cursor.moveToNext();
         }
-    }
-
-    /**
-     * Move a Sequence to a specified position
-     * @param s The sequence to move
-     * @param end The ending position
-     */
-    public void moveSequence(Sequence s, int end) {
-        int start = s.getOrder();
-        long id = s.getId();
-
-        // Update the affected surrounding sequences
-        if (start > end) {
-            changeRangeOrder(end, start - 1, 1);
-        } else if (start < end) {
-            changeRangeOrder(start + 1, end, -1);
-        }
-
-        // Update the Sequence itself
-        changeIndividualOrder(id, end);
-
-
     }
 
     // Changes the order value in the DB
@@ -270,33 +314,10 @@ public class MySQLDataSource {
     }
 
     /**
-     * Get all the steps belonging to a Sequence
-     * @param id The Id of the sequence to get steps for
-     * @return List of the Sequence's steps
-     */
-    public List<Step> getSteps(long id) {
-        List<Step> steps = new ArrayList<Step>();
-
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_STEPS,
-                null, MySQLiteHelper.COLUMN_SEQ +"=?",
-                new String[] {id +""}, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Step step = cursorToStep(cursor);
-            steps.add(step);
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-        return steps;
-    }
-
-    /**
      * Get all steps in the database
      * @return List of all the Steps
      */
-    public List<Step> getAllSteps() {
+    public List<Step> listAllSteps() {
         List<Step> steps = new ArrayList<Step>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_STEPS,
@@ -356,32 +377,10 @@ public class MySQLDataSource {
     }
 
     /**
-     * Get Trigger belonging to a Sequence
-     * @param id Id of the Sequence
-     * @return The Trigger
-     */
-    public Trigger getSeqTrigger(long id) {
-        Trigger t = new Trigger(null, Trigger.NONE);
-
-        Cursor cursor = database.query(MySQLiteHelper.TABLE_TRIGGERS,
-                null, MySQLiteHelper.COLUMN_SEQ +"=?",
-                new String[] {id +""}, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            t = cursorToTrigger(cursor);
-            cursor.moveToNext();
-        }
-
-        cursor.close();
-        return t;
-    }
-
-    /**
      * Get all Triggers in the database
      * @return List of all the Steps
      */
-    public List<Trigger> getAllTriggers() {
+    public List<Trigger> listAllTriggers() {
         List<Trigger> triggers = new ArrayList<Trigger>();
 
         Cursor cursor = database.query(MySQLiteHelper.TABLE_TRIGGERS,

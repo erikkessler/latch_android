@@ -37,10 +37,10 @@ public class TriggerIntentService extends IntentService {
         Long seqId = intent.getLongExtra(SEQUENCE_ID, -1);
 
         // Get the Sequence
-        MySQLDataSource dataSource = new MySQLDataSource(this);
+        DataSource dataSource = new MySQLDataSource(this);
         dataSource.open();
 
-        Sequence s = dataSource.getSequence(seqId);
+        Sequence s = dataSource.getSequenceById(seqId);
 
         if (s == null) {
             dataSource.close();
@@ -71,10 +71,10 @@ public class TriggerIntentService extends IntentService {
         Long seqId = intent.getLongExtra(SEQUENCE_ID, -1);
 
         // Get the Sequence
-        MySQLDataSource dataSource = new MySQLDataSource(this);
+        DataSource dataSource = new MySQLDataSource(this);
         dataSource.open();
 
-        Sequence s = dataSource.getSequence(seqId);
+        Sequence s = dataSource.getSequenceById(seqId);
 
         dataSource.close();
 

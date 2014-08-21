@@ -28,7 +28,7 @@ public class TodayActivity extends Activity
     private SeqListAdapter  mSequenceAdapter;
 
     // Data sources for Sequences and Steps
-    private MySQLDataSource mDataSource;
+    private DataSource mDataSource;
 
 
 
@@ -79,7 +79,7 @@ public class TodayActivity extends Activity
         Runnable getSequences = new Runnable() {
             @Override
             public void run() {
-                List<Sequence> seqs = mDataSource.getAllSequences(MySQLiteHelper.COLUMN_POS);
+                List<Sequence> seqs = mDataSource.listAllSequences(MySQLiteHelper.COLUMN_POS);
                 mSequenceAdapter.addAll(seqs);
                 mSequenceAdapter.notifyDataSetChanged();
             }
@@ -169,7 +169,7 @@ public class TodayActivity extends Activity
                 if (newId != -1) {
                     mDataSource.open();
                     mSequenceAdapter.clear();
-                    mSequenceAdapter.addAll(mDataSource.getAllSequences(MySQLiteHelper.COLUMN_POS));
+                    mSequenceAdapter.addAll(mDataSource.listAllSequences(MySQLiteHelper.COLUMN_POS));
                     mSequenceAdapter.notifyDataSetChanged();
                 }
             }
@@ -184,7 +184,7 @@ public class TodayActivity extends Activity
                     mDataSource.open();
 
                     // Remove and re-add to update the list
-                    Sequence s = mDataSource.getSequence(seqId);
+                    Sequence s = mDataSource.getSequenceById(seqId);
                     mSequenceAdapter.remove(s);
                     mSequenceAdapter.insert(s, pos);
                     mSequenceAdapter.notifyDataSetChanged();
@@ -219,14 +219,14 @@ public class TodayActivity extends Activity
         t = mDataSource.createTrigger(t);
 
         // Sequence that the Trigger belongs to
-        Sequence seq = mDataSource.getSequence(t.getSequenceId());
+        Sequence seq = mDataSource.getSequenceById(t.getSequenceId());
 
         // Create the alarm/notification
        Trigger.createTrigger(t, this, seq);
 
         // Update the UI
         mSequenceAdapter.clear();
-        mSequenceAdapter.addAll(mDataSource.getAllSequences(MySQLiteHelper.COLUMN_POS));
+        mSequenceAdapter.addAll(mDataSource.listAllSequences(MySQLiteHelper.COLUMN_POS));
         mSequenceAdapter.notifyDataSetChanged();
     }
 }

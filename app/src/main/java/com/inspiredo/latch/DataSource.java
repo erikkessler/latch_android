@@ -12,11 +12,11 @@ public interface DataSource {
     public void     close();
 
     // Sequences
-    public List<Sequence>   listAllSequences();
+    public List<Sequence>   listAllSequences(String order);
     public Sequence         getSequenceById(long id);
     public List<Step>       getSequenceSteps(long sId);
     public Trigger          getSequenceTrigger(long sId);
-    public void             saveSequence(Sequence s);
+    public Sequence         saveSequence(Sequence s);
     public void             deleteSequence(Sequence s);
     public void             updateSequence(long id, Sequence newS);
     public void             changeSequenceOrder(Sequence s, int order);
@@ -24,15 +24,13 @@ public interface DataSource {
 
     // Steps
     public List<Step>   listAllSteps();
-    public void         createStep(Step step);
+    public Step         createStep(Step step);
     public void         completeStep(Step step, boolean complete);
-    public void         deleteStep(Step step);
 
     // Triggers
     public List<Trigger>    listAllTriggers();
-    public void             createTrigger(Trigger t);
+    public Trigger          createTrigger(Trigger t);
     public void             deleteTrigger(Trigger t);
-    public void             updateTrigger(long id, Trigger newT);
 
 
 }

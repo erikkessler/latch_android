@@ -167,7 +167,7 @@ public class Trigger {
     public static void deleteTrigger(Trigger t, Context c) {
 
         // Open the data source and delete the Trigger
-        MySQLDataSource dataSource = new MySQLDataSource(c);
+        DataSource dataSource = new MySQLDataSource(c);
         dataSource.open();
         dataSource.deleteTrigger(t);
         dataSource.close();

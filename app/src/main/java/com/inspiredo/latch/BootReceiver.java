@@ -23,15 +23,15 @@ public class BootReceiver extends BroadcastReceiver {
      * Retrieves Triggers from DB and schedules futures notifications
      */
     private static void scheduleAlarms(Context c) {
-        MySQLDataSource dataSource = new MySQLDataSource(c);
+        DataSource dataSource = new MySQLDataSource(c);
         dataSource.open();
 
-        List<Trigger> triggers = dataSource.getAllTriggers();
+        List<Trigger> triggers = dataSource.listAllTriggers();
 
         for (Trigger trigger : triggers) {
             if (trigger.getType() == Trigger.NOTIFICATION &&
                     trigger.getTime().compareTo(new Date()) > 0) {
-                Sequence s = dataSource.getSequence(trigger.getSequenceId());
+                Sequence s = dataSource.getSequenceById(trigger.getSequenceId());
                 Trigger.createTrigger(trigger, c, s);
             }
         }

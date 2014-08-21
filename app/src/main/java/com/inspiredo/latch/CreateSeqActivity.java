@@ -182,10 +182,10 @@ public class  CreateSeqActivity extends Activity {
             // If editing fill in the data
             if (mEditing) {
                 // Instantiate and open the data sources
-                MySQLDataSource dataSource = new MySQLDataSource(this);
+                DataSource dataSource = new MySQLDataSource(this);
                 dataSource.open();
 
-                Sequence s = dataSource.getSequence(mEditId);
+                Sequence s = dataSource.getSequenceById(mEditId);
                 fillFields(s);
 
                 dataSource.close();
@@ -348,7 +348,7 @@ public class  CreateSeqActivity extends Activity {
      */
     private void update() {
         // Instantiate and open the data sources
-        MySQLDataSource dataSource = new MySQLDataSource(this);
+        DataSource dataSource = new MySQLDataSource(this);
         dataSource.open();
 
         // Create the Sequence object and add the steps to it
@@ -374,13 +374,13 @@ public class  CreateSeqActivity extends Activity {
 
 
         // Instantiate and open the data sources
-        MySQLDataSource dataSource = new MySQLDataSource(this);
+        DataSource dataSource = new MySQLDataSource(this);
         dataSource.open();
 
         // Create the sequence and get the id
         Sequence s = new Sequence(mTitle, null, mReward);
         s.setOrder(mOrder);
-        s = dataSource.createSequence(s);
+        s = dataSource.saveSequence(s);
         id = s.getId();
 
         // Create and save the steps
