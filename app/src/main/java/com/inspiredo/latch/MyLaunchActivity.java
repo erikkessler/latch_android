@@ -50,6 +50,12 @@ public class MyLaunchActivity extends Activity
                 f = TodayFragment.newInstance();
                 f.setHasOptionsMenu(true);
                 break;
+            case 1:
+                f = ActionFragment.newInstance();
+                break;
+            case 2:
+                f = GoalFragment.newInstance();
+                break;
 
         }
         // update the main content by replacing fragments
